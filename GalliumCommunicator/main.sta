@@ -1,0 +1,63 @@
+
+ROM used: 1043 (51%)
+          1043 (51%) including unused fragments
+
+          2 Average locations per line
+          5 Average locations per statement
+
+RAM used: 21 (9%) at main() level
+          37 (17%) worst case
+
+Stack used: 8 worst case (out of 7 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  175   126  66  main.c
+  224     0   0  ..\..\..\..\..\Program Files (x86)\PICC\devices\16F628a.h
+  178    66  34  ..\..\..\..\..\Program Files (x86)\PICC\drivers\LCD4Bit.c
+----- -----
+  577   192 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     21   2   1             @delay_ms1
+0      8   1   0             @const64
+ Inline        1   326  2.8  lcd_send_nibble
+0    118  11   3   235  3.8  lcd_send_byte
+0    147  14   2   380  4.7  lcd_init
+0     27   3   3   321  5.5  lcd_gotoxy
+0      8   1   0             @goto10089
+0     25   2   1    90  2.5  lcd_cursor_on
+0     37   4   1   272  4.1  lcd_putc
+0      6   1   0             @const100
+0     15   1   1    88  2.3  recv_data
+0    201  19   2   753  3.3  MAIN
+0     22   2   0             @const115
+0      6   1   0             @const117
+0     21   2   1    33  0.9  select
+0      6   1   0             @const119
+0     51   5   1   354  5.8  txt_mode
+0      8   1   0             @goto10286
+0    267  26   2   452  5.1  write_ch
+ Inline        1  1007  4.3  next_ch
+
+Program metrics:
+    Functions               12
+    Statements              192
+    Comments                150
+    Volume (V)              6962
+    Difficilty (D)          44.5
+    Effort to implement (E) 309747
+    Time to implement (T)   4 hours, 47 minutes
+    Est Delivered Bugs (B)  2
+    Cyclomatic Complexity   37
+    Maintainability (MI)    56
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-00030    45  0  
+00031-007FF   994  1005  
+
+
+

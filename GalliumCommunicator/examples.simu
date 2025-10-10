@@ -1,0 +1,39 @@
+<circuit reactStep="50" noLinStep="10" noLinAcc="5" animate="0" type="simulide_0.1" speed="1000000">
+ 
+Ground-3: 
+<item itemtype="Ground" id="Ground-3" Show_id="false" rotation="0" x="-340" y="-340" objectName="Ground-3" valLabelx="0" labelrot="0" valLabely="0" labelx="-16" vflip="1" labely="-24" valLabRot="0" hflip="1"/>
+ 
+Hd44780-2: 
+<item itemtype="Hd44780" id="Hd44780-2" Show_id="true" rotation="0" x="-372" y="-476" objectName="Hd44780-2" valLabelx="0" labelrot="0" valLabely="0" Cols="16" labelx="70" vflip="1" labely="-82" valLabRot="0" Rows="2" hflip="1"/>
+ 
+pic16f873-1: 
+<item x="-444" y="-436" id="pic16f873-1" Show_id="true" Mhz="1" Ser_Monitor="false" Program="D:/Mi Proyecto/main.hex" labelx="0" labely="-20" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="PIC" valLabelx="0" valLabely="0" objectName="pic16f873-1" Ser_Port="false" vflip="1"/>
+ 
+Connector-4: 
+<item enodeid="enode-4" startpinid="Ground-3-Gnd" x="-340" y="-356" id="Connector-4" endpinid="Hd44780-2-PinRW" Show_id="false" labelx="-16" labely="-24" pointList="-340,-356,-340,-444,-348,-444,-348,-468" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-4" vflip="1"/>
+ 
+Connector-5: 
+<item enodeid="enode-5" startpinid="pic16f873-1-RB3" x="-404" y="-396" id="Connector-5" endpinid="Hd44780-2-PinEn" Show_id="false" labelx="-16" labely="-24" pointList="-404,-396,-340,-396,-340,-468" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-5" vflip="1"/>
+ 
+Connector-6: 
+<item enodeid="enode-6" startpinid="pic16f873-1-RB2" x="-404" y="-388" id="Connector-6" endpinid="Hd44780-2-PinRS" Show_id="false" labelx="-16" labely="-24" pointList="-404,-388,-356,-388,-356,-468" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-6" vflip="1"/>
+ 
+Connector-7: 
+<item enodeid="enode-7" startpinid="pic16f873-1-RB4" x="-404" y="-404" id="Connector-7" endpinid="Hd44780-2-dataPin4" Show_id="false" labelx="-16" labely="-24" pointList="-404,-404,-300,-404,-300,-468" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-7" vflip="1"/>
+ 
+Connector-8: 
+<item enodeid="enode-8" startpinid="pic16f873-1-RB5" x="-404" y="-412" id="Connector-8" endpinid="Hd44780-2-dataPin5" Show_id="false" labelx="-16" labely="-24" pointList="-404,-412,-292,-412,-292,-468" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-8" vflip="1"/>
+ 
+Connector-9: 
+<item enodeid="enode-9" startpinid="pic16f873-1-RB6" x="-404" y="-420" id="Connector-9" endpinid="Hd44780-2-dataPin6" Show_id="false" labelx="-16" labely="-24" pointList="-404,-420,-284,-420,-284,-468" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-9" vflip="1"/>
+ 
+Connector-10: 
+<item enodeid="enode-10" startpinid="pic16f873-1-RB7" x="-404" y="-428" id="Connector-10" endpinid="Hd44780-2-dataPin7" Show_id="false" labelx="-16" labely="-24" pointList="-404,-428,-276,-428,-276,-476" hflip="1" rotation="0" labelrot="0" valLabRot="0" itemtype="Connector" valLabelx="0" valLabely="0" objectName="Connector-10" vflip="1"/>
+ 
+PlotterWidget: 
+<item statusTip="" MinVolt="-500" inputMethodHints="0" visible="false" updatesEnabled="true" childrenRect="" sizePolicy="" minimumHeight="200" sizeIncrement="" font="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" minimumSize="" windowIconText="" sizeHint="" geometry="" frameGeometry="" acceptDrops="false" toolTip="" enabled="true" rect="" normalGeometry="" childrenRegion="" maximumSize="" windowOpacity="1" windowIcon="" layoutDirection="0" cursor="" minimumSizeHint="" maximized="false" baseSize="" windowModality="0" locale="" objectName="PlotterWidget" accessibleName="" accessibleDescription="" windowModified="false" toolTipDuration="-1" focus="false" autoFillBackground="false" contextMenuPolicy="1" x="0" mouseTracking="false" y="0" windowTitle="" size="" maximumHeight="200" width="200" windowFilePath="" maximumWidth="1000" height="200" pos="" focusPolicy="0" minimumWidth="200" frameSize="" itemtype="Plotter" fullScreen="false" styleSheet="" MaxVolt="500" modal="false" isActiveWindow="true" whatsThis="" palette="" minimized="false"/>
+ 
+SerialPortWidget: 
+<item statusTip="" inputMethodHints="0" visible="false" updatesEnabled="true" childrenRect="" sizePolicy="" minimumHeight="0" sizeIncrement="" font="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" minimumSize="" windowIconText="" sizeHint="" geometry="" frameGeometry="" acceptDrops="false" toolTip="" enabled="true" SettingsProp=",0,3,0,0,0" rect="" normalGeometry="" childrenRegion="" maximumSize="" windowOpacity="1" windowIcon="" layoutDirection="0" cursor="" minimumSizeHint="" maximized="false" baseSize="" windowModality="0" locale="" objectName="SerialPortWidget" accessibleName="" accessibleDescription="" windowModified="false" toolTipDuration="-1" focus="false" autoFillBackground="false" contextMenuPolicy="1" x="0" mouseTracking="false" y="0" windowTitle="Configuracion" size="" maximumHeight="170" width="313" windowFilePath="" maximumWidth="450" height="141" pos="" focusPolicy="0" minimumWidth="0" frameSize="" itemtype="SerialPort" fullScreen="false" styleSheet="" modal="false" isActiveWindow="true" whatsThis="" palette="" minimized="false"/>
+ 
+</circuit>

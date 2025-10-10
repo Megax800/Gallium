@@ -18,7 +18,7 @@ ESP8266WiFiMulti WiFiMulti;
 
 void setup() {
 
-  delay(5000);
+  delay(10000);
   Serial.begin(9600, SERIAL_8N1);
   // Serial.setDebugOutput(true);
 
@@ -28,13 +28,13 @@ void setup() {
 
   for (uint8_t t = 4; t > 0; t--) {
     Serial.printf("[SETUP] WAIT %d...", t);
+    delay(1000);
     Serial.printf("\f");
     Serial.flush();
-    delay(1000);
   }
 
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("DPE", "herry1751");
+  WiFiMulti.addAP("Steel-FTTH", "puey+868/100");
 }
 
 void loop() {
@@ -46,7 +46,7 @@ void loop() {
     HTTPClient http;
 
     Serial.print("[HTTP] begin...\n");
-    if (http.begin(client, "http://192.168.0.200:3000")) {  // HTTP
+    if (http.begin(client, "http://192.168.1.17:3000")) {  // HTTP
 
 
       Serial.print("[HTTP] GET...");
@@ -72,6 +72,5 @@ void loop() {
       Serial.println("[HTTP] Unable to connect");
     }
   }
-
   delay(10000);
 }
