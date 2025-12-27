@@ -1,76 +1,61 @@
-/**
-   BasicHTTPClient.ino
+#include <Wire.h>
+#include <EEPROM.h>
+#include "ui.h"
 
-    Created on: 24.05.2015
+//Flash Definitions
+#define MAX_STRING_LENGTH 20
+struct network{ 
+    char mySSID[MAX_STRING_LENGTH] = "";
+    char myPW[MAX_STRING_LENGTH] = "";
+  };
+struct{
+  uint8_t deviceId = 0;
+  network known_APs[10];
+}settings;
 
-*/
-
-#include <Arduino.h>
-
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
-
-#include <ESP8266HTTPClient.h>
-
-#include <WiFiClient.h>
-
-ESP8266WiFiMulti WiFiMulti;
+const char *menu[] = {"Limpiar APs", "Prueba Red", "Ajustes WiFi"};
 
 void setup() {
-
-  delay(10000);
-  Serial.begin(9600, SERIAL_8N1);
-  // Serial.setDebugOutput(true);
-
-  Serial.println();
-  Serial.println();
-  Serial.println();
-
-  for (uint8_t t = 4; t > 0; t--) {
-    Serial.printf("[SETUP] WAIT %d...", t);
-    delay(1000);
-    Serial.printf("\f");
-    Serial.flush();
-  }
-
+  Wire.begin(0, 2);
+  init_display();
+  keyPad.begin();
   WiFi.mode(WIFI_STA);
-  WiFiMulti.addAP("Steel-FTTH", "puey+868/100");
+  WiFi.persistent(false);
+  delay(2000);
 }
 
-void loop() {
-  // wait for WiFi connection
-  if ((WiFiMulti.run() == WL_CONNECTED)) {
-
-    WiFiClient client;
-
-    HTTPClient http;
-
-    Serial.print("[HTTP] begin...\n");
-    if (http.begin(client, "http://192.168.1.17:3000")) {  // HTTP
-
-
-      Serial.print("[HTTP] GET...");
-      // start connection and send HTTP header
-      int httpCode = http.GET();
-
-      // httpCode will be negative on error
-      if (httpCode > 0) {
-        // HTTP header has been send and Server response header has been handled
-        Serial.printf("\f[HTTP] GET code: %d\n", httpCode);
-
-        // file found at server
-        if (httpCode == HTTP_CODE_OK || httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
-          String payload = http.getString();
-          Serial.println(payload);
-        }
-      } else {
-        Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-      }
-
-      http.end();
-    } else {
-      Serial.println("[HTTP] Unable to connect");
-    }
+void loop() 
+{
+  uint8_t current_op = 0;
+  lock_screen();
+  do{
+  draw_title("Menu");
+  current_op = option_select(menu, 3);
+  switch(current_op)
+  {
+    case 1:
+      wifiMulti.cleanAPlist();
+      info_message("Limpiar APs", "Comando Exitoso");
+    break;
+    case 2:
+      draw_title("Prueba de Red");
+      display.fillRect(0, 13, 128, 50, SH110X_BLACK);
+      display.setCursor(0, 32);
+      display.println("Conectando");
+      display.display();
+      WiFi.begin("DPE", "herry1751");
+      while(WiFi.status() != WL_CONNECTED)
+      {
+        display.print(".");
+        display.display();
+        delay(500);
+      } 
+    break;
+    case 3:
+      net_scan();
+    break;
   }
-  delay(10000);
+  }while(current_op != 0);
+  
+  delay(1000);
 }
