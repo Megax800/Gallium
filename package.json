@@ -1,0 +1,23 @@
+{
+  "name": "galliumserver",
+  "version": "1.0.0",
+  "description": "Server for chatting through web browser and the Gallium Communicator",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Megax800/GalliumServer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Megax800/GalliumServer/issues"
+  },
+  "homepage": "https://github.com/Megax800/GalliumServer#readme",
+  "dependencies": {
+    "aedes": "^0.51.3",
+    "mqtt": "^5.15.0"
+  }
+}
