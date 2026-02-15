@@ -3,7 +3,7 @@ const aedes = require('aedes')();
 const server = require('net').createServer(aedes.handle);
 const mqttPort = 1883; // Standard MQTT port
 
-const hostname = '192.168.1.106';
+const hostname = '192.168.1.105';
 const port = 3000;
 
 server.listen(mqttPort, function () {
@@ -21,8 +21,8 @@ aedes.on('publish', function (packet, client) {
   }
 });
 
-aedes.on('subscribe', (packet, client) =>{
+/*aedes.on('subscribe', (packet, client) =>{
   if (client) {
     console.log('client', client.id, 'subscribed to topic', packet.topic.toString());
   }
-})
+})*/
