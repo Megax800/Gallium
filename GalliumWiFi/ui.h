@@ -2,7 +2,6 @@
 #define UI_H
 #include <I2CKeyPad.h>
 #include <Arduino.h>
-#include <ESP8266WiFiMulti.h>
 #include "display.h"
 extern const uint8_t KEYPAD_ADDRESS;
 extern I2CKeyPad keyPad;

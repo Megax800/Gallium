@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <EEPROM.h>
 #include "ui.h"
+#include "network.h"
 
 //Flash Definitions
 #define MAX_STRING_LENGTH 20
@@ -13,14 +14,13 @@ struct{
   network known_APs[10];
 }settings;
 
-const char *menu[] = {"Limpiar APs", "Prueba Red", "Ajustes WiFi"};
+const char *menu[] = {"Enviar Mensaje", "Obtener Mensajes", "Ajustes WiFi"};
 
 void setup() {
   Wire.begin(0, 2);
   init_display();
   keyPad.begin();
   WiFi.mode(WIFI_STA);
-  WiFi.persistent(false);
   delay(2000);
 }
 
@@ -34,22 +34,17 @@ void loop()
   switch(current_op)
   {
     case 1:
-      wifiMulti.cleanAPlist();
-      info_message("Limpiar APs", "Comando Exitoso");
+      draw_title("Escriba Mensaje");
+      MQTT_post(text_input().c_str());
+      info_message("MQTT", "Comando Exitoso");
+      delay(3000);
     break;
     case 2:
-      draw_title("Prueba de Red");
-      display.fillRect(0, 13, 128, 50, SH110X_BLACK);
+      draw_title("Mensajes Recibidos");
       display.setCursor(0, 32);
-      display.println("Conectando");
+      display.println(MQTT_get());
       display.display();
-      WiFi.begin("DPE", "herry1751");
-      while(WiFi.status() != WL_CONNECTED)
-      {
-        display.print(".");
-        display.display();
-        delay(500);
-      } 
+      delay(3000);
     break;
     case 3:
       net_scan();
@@ -58,4 +53,5 @@ void loop()
   }while(current_op != 0);
   
   delay(1000);
+
 }

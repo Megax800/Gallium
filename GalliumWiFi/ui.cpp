@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "display.h"
+#include "network.h"
 const uint8_t KEYPAD_ADDRESS = 0x20;
 I2CKeyPad keyPad(KEYPAD_ADDRESS);
 char keymap[19] = "123A456B789C*0#DNF";  //  N = NoKey, F = Fail
@@ -250,6 +251,7 @@ void net_scan()
   uint8_t results = WiFi.scanNetworks(false, true);
   uint8_t menu_cursor = 0;
   bool exit = true;
+  uint8_t connectionTimeout = 0;
   
   draw_title("Selecione una Red");
   display.setCursor(20, 17);
@@ -284,11 +286,12 @@ void net_scan()
           display.printf("Red: %s", WiFi.SSID(menu_cursor));
           display.display();
           WiFi.begin(WiFi.SSID(menu_cursor).c_str(), text_input().c_str());
-          while(WiFi.status() != WL_CONNECTED)
+          while(WiFi.status() != WL_CONNECTED && connectionTimeout < 14)
           {
             display.print(".");
             display.display();
             delay(500);
+            connectionTimeout++;
           }
           exit = false;
         break;
