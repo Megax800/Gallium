@@ -1,12 +1,21 @@
-const http = require('node:http');
-const aedes = require('aedes')();
-const server = require('net').createServer(aedes.handle);
+import express from 'express'
+import Aedes from 'aedes'
+import net from 'net'
+const app = express()  
+const aedes: Aedes = new Aedes();
+const mqttbroker = net.createServer(aedes.handle);
+const port = 3000;  
 const mqttPort = 1883; // Standard MQTT port
 
-const hostname = '192.168.1.105';
-const port = 3000;
+app.get('/', (req: any, res: any) => {
+  res.send('Hello World!')
+})
 
-server.listen(mqttPort, function () {
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`)
+})
+
+mqttbroker.listen(mqttPort, function () {
   console.log('MQTT Broker listening on port', mqttPort);
 });
 
@@ -17,7 +26,7 @@ aedes.on('client', function (client) {
 
 aedes.on('publish', function (packet, client) {
   if (client) {
-    console.log('Message published by client', client.id, 'on topic', packet.topic.toString());
+    console.log('Message published by client', client.id, 'on topic', packet.topic);
   }
 });
 
