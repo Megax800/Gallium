@@ -1,0 +1,9 @@
+GET http://localhost:3000/api/message
+###
+GET http://localhost:3000/api/message/id
+###
+POST http://localhost:3000/api/message/
+###
+PUT http://localhost:3000/api/message/id
+###
+DELETE http://localhost:3000/api/message/id

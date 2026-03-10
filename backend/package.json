@@ -3,11 +3,11 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Server for chatting through web browser and the Gallium Communicator",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
-    "test": "node main.js",
+    "test": "node app.js",
     "build": "tsc -p ./tsconfig.json",
-    "start:dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/index.js\""
+    "start:dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./dist/src/app.js\""
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   "dependencies": {
     "aedes": "^0.51.3",
     "express": "^5.2.1",
+    "mongodb": "7.1.0",
     "mqtt": "^5.15.0",
     "pnpm": "^10.30.3"
   },

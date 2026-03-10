@@ -1,15 +1,18 @@
 import express from 'express'
 import Aedes from 'aedes'
 import net from 'net'
+import { chatroomRouter } from './chatroom/chatroom.routes.js'
+import { messageRouter } from './message/message.routes.js'
+import { userRouter } from './user/user.routes.js'
 const app = express()  
 const aedes: Aedes = new Aedes();
 const mqttbroker = net.createServer(aedes.handle);
 const port = 3000;  
 const mqttPort = 1883; // Standard MQTT port
 
-app.get('/', (req: any, res: any) => {
-  res.send('Hello World!')
-})
+app.use('/api/chatroom',chatroomRouter)
+app.use('/api/message',messageRouter)
+app.use('/api/user',userRouter)
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
