@@ -1,11 +1,13 @@
+import { ObjectId } from 'mongodb';
+import crypto from 'node:crypto'
 
 export class Message{
     constructor(
-        public id: number,
         public body: string,
-        public date: Date,
-        public time: Date,
-        public sender: number,
-        public receiver: number
+        public date: string,
+        public time: string,
+        public sender: string,
+        public receiver: string,
+        public _id?: ObjectId,
     ){}
 }

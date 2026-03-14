@@ -10,6 +10,7 @@ const mqttbroker = net.createServer(aedes.handle);
 const port = 3000;  
 const mqttPort = 1883; // Standard MQTT port
 
+app.use(express.json())
 app.use('/api/chatroom',chatroomRouter)
 app.use('/api/message',messageRouter)
 app.use('/api/user',userRouter)

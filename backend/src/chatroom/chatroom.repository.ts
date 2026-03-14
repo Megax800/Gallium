@@ -1,24 +1,32 @@
-import { Repository } from "../../shared/repository";
-import { Chatroom } from "./chatroom.entity";
+import { Repository } from "../../shared/repository.js";
+import { Chatroom } from "./chatroom.entity.js";
+import { db } from "../../shared/db/conn.js";
+import { ObjectId } from "mongodb";
+
+const chatrooms =db.collection<Chatroom>("chatrooms")
 
 export class chatroomRepository implements Repository<Chatroom>{
-    public findAll(): Chatroom[] | undefined {
-        return 
+    public async findAll(): Promise <Chatroom[] | undefined> {
+        return await chatrooms.find().toArray()
     }
 
-    public findOne(item: { id: string; }): Chatroom | undefined {
-        return
+    public async findOne(item: { id: string }): Promise <Chatroom | undefined> {
+        const _id = new ObjectId(item.id)
+        return (await chatrooms.findOne({_id})) || undefined
     }
 
-    public add(item: Chatroom): Chatroom | undefined {
-        return
+    public async add(item: Chatroom): Promise <Chatroom | undefined> {
+        item._id = (await chatrooms.insertOne(item)).insertedId
+        return item
     }
 
-    public update(item: Chatroom): Chatroom | undefined {
-        return
+    public async update(id: string, item: Chatroom): Promise <Chatroom | undefined> {
+        const _id = new ObjectId(id)
+        return (await chatrooms.findOneAndUpdate({_id}, {$set: item}, {returnDocument: 'after'})) || undefined
     }
 
-    public delete(item: { id: string; }): Chatroom | undefined {
-        return
+    public async delete(item: { id: string }): Promise <Chatroom | undefined> {
+        const _id = new ObjectId(item.id)
+        return(await chatrooms.findOneAndDelete({_id})) || undefined
     }
 }
