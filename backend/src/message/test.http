@@ -1,0 +1,26 @@
+### Obtengo todos los mensajes
+GET http://localhost:3000/api/message
+
+### Obtengo un mensaje por id
+GET http://localhost:3000/api/message/69b56093fdf0ce31e4a22754
+
+###
+POST http://localhost:3000/api/message/
+Content-Type: application/json
+
+{
+    "body": "buenas tardes noches",
+    "sender": "69b55d08c49f5f2fea9d4a9f",
+    "receiver": "69b55dc5fe17b6d1a8f758cb"
+}
+###
+PUT http://localhost:3000/api/message/69b56093fdf0ce31e4a22754
+Content-Type: application/json
+
+{
+    "body": "buenas noches",
+    "sender": "69b55d08c49f5f2fea9d4a9f",
+    "receiver": "69b55dc5fe17b6d1a8f758cb"
+}
+###
+DELETE http://localhost:3000/api/message/69b56028988aa9dcb1108389

@@ -1,0 +1,27 @@
+GET http://localhost:3000/api/user
+###
+GET http://localhost:3000/api/user/69b55d08c49f5f2fea9d4a9f
+###
+POST http://localhost:3000/api/user
+Content-Type: application/json
+
+{
+    "nickname": "malcolmx",
+    "firstname": "John",
+    "lastname": "Egbert",
+    "mail": "superpowers@mail.com",
+    "passwd": "1234"
+}
+###
+PUT http://localhost:3000/api/user/69b55dc5fe17b6d1a8f758cb
+Content-Type: application/json
+
+{
+    "nickname": "malcolmx2",
+    "firstname": "John",
+    "lastname": "Egbert",
+    "email": "superpowers@mail.com",
+    "passwd": "1234"
+}
+###
+DELETE http://localhost:3000/api/user/69b55d08c49f5f2fea9d4a9f
