@@ -1,15 +1,21 @@
+import 'reflect-metadata'
 import express from 'express'
 import Aedes from 'aedes'
 import net from 'net'
 import { chatroomRouter } from './chatroom/chatroom.routes.js'
 import { messageRouter } from './message/message.routes.js'
 import { userRouter } from './user/user.routes.js'
+import { orm } from '../shared/db/orm.js'
+import { RequestContext } from '@mikro-orm/core'
 const app = express()  
 const aedes: Aedes = new Aedes();
 const mqttbroker = net.createServer(aedes.handle);
 const port = 3000;  
 const mqttPort = 1883; // Standard MQTT port
 
+app.use((req, res, next) =>{
+  RequestContext.create(orm.em, next)
+})
 app.use(express.json())
 app.use('/api/chatroom',chatroomRouter)
 app.use('/api/message',messageRouter)

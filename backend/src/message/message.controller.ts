@@ -1,8 +1,9 @@
-import { messageRepository } from "./message.repository.js";
 import { Request, Response, NextFunction } from "express";
 import { Message } from "./message.entity.js";
+import { ObjectId } from "@mikro-orm/mongodb";
+import { orm } from "../../shared/db/orm.js";
 
-const repository = new messageRepository()
+const em = orm.em
 
 function sanitizeInput( req: Request, res: Response, next: NextFunction) {
     req.body.sanitizeInput={
@@ -21,48 +22,45 @@ function sanitizeInput( req: Request, res: Response, next: NextFunction) {
   }
 
 async function findAll(req: Request, res: Response){
-    res.json({data: await repository.findAll()})
+    try{
+        const messages = await em.find(Message, {})
+        res.status(200).json({data: messages})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function findOne(req: Request, res: Response){
-    const id = req.params.id.toString()
-    const buffer = await repository.findOne({id})
-    if(!buffer){
-        return res.status(404).send({message: "message not Found"})
-    }
-    res.json({data: buffer})
+    try{
+        const id: any = req.params.id
+        const buffer = await em.findOneOrFail(Message, {_id: new ObjectId(id) })
+        res.status(200).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function add(req: Request, res: Response){
-    const input = req.body.sanitizeInput
-    const timestamp = new Date()
-
-    const buffer = new Message(
-        input.body,
-        timestamp.toLocaleDateString(),
-        timestamp.toLocaleTimeString(),
-        input.sender,
-        input.receiver
-    )
-
-    const message = await repository.add(buffer)
-    res.status(201).send({message: "message Created", data: message})
+    try{
+        const buffer = em.create(Message, req.body)
+        await em.flush()
+        res.status(201).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function update(req: Request, res: Response){
-    const buffer = await repository.update(req.params.id.toString(), req.body.sanitizeInput)
-    if(!buffer){
-        return res.status(404).send({message: "message not Found"})
-    }
-    res.status(200).send({message: "message updated successfully", data: buffer})
+    try{
+        const id: any = req.params.id
+        const buffer = em.getReference(Message, new ObjectId(id))
+        em.assign(buffer, req.body)
+        await em.flush()
+        res.status(200).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function remove(req: Request, res: Response){
-    const id = req.params.id.toString()
-    const buffer = await repository.delete({id})
-    if(!buffer){
-        return res.status(404).send({message: "message not Found"})
-    }
-    res.status(200).send({message: "message deleted successfully"})
-}
+    try{
+        const id: any = req.params.id
+        const buffer = em.getReference(Message, new ObjectId(id))
+        await em.remove(buffer)
+        await em.flush()
+        res.status(200).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}}
+
 export{sanitizeInput, findAll, findOne, add, update, remove}

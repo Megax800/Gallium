@@ -1,8 +1,9 @@
-import { chatroomRepository } from "./chatroom.repository.js";
 import { Request, Response, NextFunction } from "express";
+import { orm } from "../../shared/db/orm.js";
 import { Chatroom } from "./chatroom.entity.js";
+import { ObjectId } from "@mikro-orm/mongodb";
 
-const repository = new chatroomRepository()
+const em = orm.em
 
 function sanitizeInput( req: Request, res: Response, next: NextFunction) {
     req.body.sanitizeInput={
@@ -22,46 +23,45 @@ function sanitizeInput( req: Request, res: Response, next: NextFunction) {
   }
 
 async function findAll(req: Request, res: Response){
-    res.json({data: await repository.findAll()})
+    try{
+        const chatrooms = await em.find(Chatroom, {})
+        res.status(200).json({data: chatrooms})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function findOne(req: Request, res: Response){
-    const id = req.params.id.toString()
-    const buffer = await repository.findOne({id})
-    if(!buffer){
-        return res.status(404).send({message: "Chatroom not Found"})
-    }
-    res.json({data: buffer})
+    try{
+        const id: any = req.params.id
+        const buffer = await em.findOneOrFail(Chatroom, {_id: new ObjectId(id) })
+        res.status(200).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function add(req: Request, res: Response){
-    const input = req.body.sanitizeInput
-
-    const buffer = new Chatroom(
-        input.admin,
-        input.chatname,
-        input.isGroup,
-        input.description
-    )
-
-    const chatroom = await repository.add(buffer)
-    res.status(201).send({message: "Chatroom Created", data: chatroom})
+    try{
+        const buffer = em.create(Chatroom, req.body)
+        await em.flush()
+        res.status(201).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function update(req: Request, res: Response){
-    const buffer = await repository.update(req.params.id.toString(), req.body.sanitizeInput)
-    if(!buffer){
-        return res.status(404).send({message: "Chatroom not Found"})
-    }
-    res.status(200).send({message: "Chatroom updated successfully", data: buffer})
+    try{
+        const id: any = req.params.id
+        const buffer = em.getReference(Chatroom, new ObjectId(id))
+        em.assign(buffer, req.body)
+        await em.flush()
+        res.status(200).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function remove(req: Request, res: Response){
-    const id = req.params.id.toString()
-    const buffer = await repository.delete({id})
-    if(!buffer){
-        return res.status(404).send({message: "Chatroom not Found"})
-    }
-    res.status(200).send({message: "Chatroom deleted successfully"})
-}
+    try{
+        const id: any = req.params.id
+        const buffer = em.getReference(Chatroom, new ObjectId(id))
+        await em.remove(buffer)
+        await em.flush()
+        res.status(200).json({data: buffer})
+    }catch(err: any){res.status(500).json({message: err.message})}}
+
 export{sanitizeInput, findAll, findOne, add, update, remove}

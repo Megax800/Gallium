@@ -1,13 +1,19 @@
-import { ObjectId } from 'mongodb';
-import crypto from 'node:crypto'
+import { Entity, ManyToMany, ManyToOne, Property} from '@mikro-orm/decorators/legacy'
+import { User } from '../user/user.entity.js';
+import { Collection, Cascade, Rel } from '@mikro-orm/core';
+import { BaseEntity } from '../../shared/baseEntity.entity.js';
+import { Chatroom } from '../chatroom/chatroom.entity.js';
 
-export class Message{
-    constructor(
-        public body: string,
-        public date: string,
-        public time: string,
-        public sender: string,
-        public receiver: string,
-        public _id?: ObjectId,
-    ){}
+@Entity()
+export class Message extends BaseEntity{
+    @Property({type: 'string'})    
+    body!: string
+    @Property({type: 'string'})
+    date!: string
+    @Property({type: 'string'})
+    time!: string
+    @ManyToOne(() => User)
+    sender!: Rel<User>
+    @ManyToMany(() => Chatroom, chatrooms => chatrooms.messages, {cascade: [Cascade.ALL]})
+    receiver= new Collection<Chatroom>(this)
 }
