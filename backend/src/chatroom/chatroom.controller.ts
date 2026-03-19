@@ -6,8 +6,8 @@ const repository = new chatroomRepository()
 
 function sanitizeInput( req: Request, res: Response, next: NextFunction) {
     req.body.sanitizeInput={
-        admin: req.body.desc,
-        chatname: req.body.position,
+        admin: req.body.admin,
+        chatname: req.body.chatname,
         isGroup: req.body.isGroup,
         desc: req.body.description
     }
@@ -41,7 +41,7 @@ async function add(req: Request, res: Response){
         input.admin,
         input.chatname,
         input.isGroup,
-        input.description
+        input.desc
     )
 
     const chatroom = await repository.add(buffer)
