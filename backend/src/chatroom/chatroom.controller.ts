@@ -7,10 +7,10 @@ const em = orm.em
 
 function sanitizeInput( req: Request, res: Response, next: NextFunction) {
     req.body.sanitizeInput={
-        admin: req.body.desc,
-        chatname: req.body.position,
+        admin: req.body.admin,
+        chatname: req.body.chatname,
         isGroup: req.body.isGroup,
-        desc: req.body.description
+        description: req.body.description
     }
     //more checks here
   
@@ -24,7 +24,7 @@ function sanitizeInput( req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response){
     try{
-        const chatrooms = await em.find(Chatroom, {})
+        const chatrooms = await em.find(Chatroom, {}, {populate:['members', 'messages', 'admin']})
         res.status(200).json({data: chatrooms})
     }catch(err: any){res.status(500).json({message: err.message})}
 }
@@ -32,14 +32,14 @@ async function findAll(req: Request, res: Response){
 async function findOne(req: Request, res: Response){
     try{
         const id: any = req.params.id
-        const buffer = await em.findOneOrFail(Chatroom, {_id: new ObjectId(id) })
+        const buffer = await em.findOneOrFail(Chatroom, {id}, {populate:['members', 'messages', 'admin']})
         res.status(200).json({data: buffer})
     }catch(err: any){res.status(500).json({message: err.message})}
 }
 
 async function add(req: Request, res: Response){
     try{
-        const buffer = em.create(Chatroom, req.body)
+        const buffer = em.create(Chatroom, req.body.sanitizeInput)
         await em.flush()
         res.status(201).json({data: buffer})
     }catch(err: any){res.status(500).json({message: err.message})}
@@ -48,8 +48,8 @@ async function add(req: Request, res: Response){
 async function update(req: Request, res: Response){
     try{
         const id: any = req.params.id
-        const buffer = em.getReference(Chatroom, new ObjectId(id))
-        em.assign(buffer, req.body)
+        const buffer = await em.findOneOrFail(Chatroom, {id})
+        em.assign(buffer, req.body.sanitizeInput)
         await em.flush()
         res.status(200).json({data: buffer})
     }catch(err: any){res.status(500).json({message: err.message})}
@@ -58,7 +58,7 @@ async function update(req: Request, res: Response){
 async function remove(req: Request, res: Response){
     try{
         const id: any = req.params.id
-        const buffer = em.getReference(Chatroom, new ObjectId(id))
+        const buffer = em.getReference(Chatroom, id)
         await em.remove(buffer)
         await em.flush()
         res.status(200).json({data: buffer})

@@ -18,9 +18,9 @@ export class User extends BaseEntity{
     @Property({type: 'string'})
     passwd!: string
     @ManyToMany(() => Chatroom, chatroom => chatroom.members, {cascade: [Cascade.ALL], owner: true})
-    chatrooms!: Chatroom[]
+    chatrooms = new Collection<Chatroom>(this)
     @OneToMany(() => Message, message => message.sender)
     messages = new Collection<Message>(this)
-    @OneToMany(() => Chatroom, chatroom => chatroom.admin, {cascade: [Cascade.ALL]})
+    @OneToMany(() => Chatroom, (chatroom) => chatroom.admin, {cascade: [Cascade.ALL]})
     admin = new Collection<Chatroom>(this)
 }

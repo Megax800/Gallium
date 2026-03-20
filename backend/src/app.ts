@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import express from 'express'
 import Aedes from 'aedes'
 import net from 'net'
+import cors from 'cors'
 import { chatroomRouter } from './chatroom/chatroom.routes.js'
 import { messageRouter } from './message/message.routes.js'
 import { userRouter } from './user/user.routes.js'
@@ -13,6 +14,8 @@ const mqttbroker = net.createServer(aedes.handle);
 const port = 3000;  
 const mqttPort = 1883; // Standard MQTT port
 
+
+app.use(cors())
 app.use((req, res, next) =>{
   RequestContext.create(orm.em, next)
 })

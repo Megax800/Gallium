@@ -10,8 +10,8 @@ Content-Type: application/json
 
 {
     "body": "buenas tardes noches",
-    "sender": "69b55d08c49f5f2fea9d4a9f",
-    "receiver": "69b55dc5fe17b6d1a8f758cb"
+    "sender": "69bc66d67ee3ce7652e8d727",
+    "receiver": "69bc67837ee3ce7652e8d72a"
 }
 ###
 PUT http://localhost:3000/api/message/69b56093fdf0ce31e4a22754

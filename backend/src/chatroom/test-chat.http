@@ -1,0 +1,26 @@
+### FIND ALL
+GET http://localhost:3000/api/chatroom 
+###
+GET http://localhost:3000/api/chatroom/69bc8a093d35f62d655926a5
+### ADD
+POST http://localhost:3000/api/chatroom/
+Content-Type: application/json
+
+{
+    "admin": "69bc728dad104326fa44e7bd",
+    "chatname": "John",
+    "isGroup": false,
+    "description": "hola"
+}
+###
+PUT http://localhost:3000/api/chatroom/69bc8a093d35f62d655926a5
+Content-Type: application/json
+
+{
+    "admin": "69bc72adad104326fa44e7be",
+    "chatname": "Johnas",
+    "isGroup": false,
+    "description": "hola"
+}
+###
+DELETE http://localhost:3000/api/chatroom/69bc881d90aab8ecef126ef6

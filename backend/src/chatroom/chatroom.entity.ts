@@ -6,17 +6,16 @@ import { BaseEntity } from '../../shared/baseEntity.entity.js';
 
 @Entity()
 export class Chatroom extends BaseEntity{
-        @ManyToOne(() => User)
-        admin?: Rel<User>
-        @Property({type: 'string'})
-        chatname!: string
+        @ManyToOne(() => User ,{nullable: true})
+        admin?: User
+        @Property({type: 'string', nullable: true})
+        chatname?: string
         @Property({type: 'boolean'})
         isGroup!: boolean
-        @Property({type: 'string'})
+        @Property({type: 'string' ,nullable: true})
         description?: string
         @ManyToMany(() => Message, message => message.receiver, {cascade: [Cascade.ALL], owner: true})
         messages?: Message[]
-        @ManyToMany(() => User, user => user.chatrooms, {cascade: [Cascade.ALL]})
-        members!: Rel<User>
-    
+        @ManyToMany(() => User, user => user.chatrooms)
+        members = new Collection<User>(this)   
 }
