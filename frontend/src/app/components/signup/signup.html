@@ -1,0 +1,15 @@
+<div>
+  <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+    <label for="nickname">Nombre de usuario</label>
+    <input type="text" formControlName="nickname" id="nickname" /><br />
+    <label for="name">Nombre</label>
+    <input type="text" formControlName="name" id="name" /><br />
+    <label for="surname">Apellido</label>
+    <input type="text" formControlName="surname" id="surname" /><br />
+    <label for="email">Email</label>
+    <input type="text" formControlName="email" id="email" /><br />
+    <label for="password">Contraseña</label>
+    <input type="password" formControlName="password" id="password" /><br />
+    <button type="submit" [disabled]="!signupForm.valid">Enviar</button>
+  </form>
+</div>

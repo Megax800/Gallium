@@ -9,6 +9,8 @@ function sanitizeInput( req: Request, res: Response, next: NextFunction) {
     req.body.sanitizeInput={
         admin: req.body.admin,
         chatname: req.body.chatname,
+        admin: req.body.admin,
+        chatname: req.body.chatname,
         isGroup: req.body.isGroup,
         description: req.body.description
     }
