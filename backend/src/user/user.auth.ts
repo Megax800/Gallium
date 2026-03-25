@@ -3,23 +3,24 @@ import jwt from "jsonwebtoken";
 import { User } from "./user.entity";
 /*TO DO
 - Plantear un token seguro y una mejor contraseña para el correo
-- Definir variables de entorno para guardar las contraseñas y datos sensibles de forma segura
 */
+const secret_key = `${process.env.JWT_KEY}`;
+
 async function sendVerification(newUser: User) {
   const transporter = mailer.createTransport({
-    host: "mail15.serv00.com",
+    host: process.env.MAIL_HOST,
     port: 465,
     secure: true,
     auth: {
-      user: "galliumuserverification@coolair.serv00.net",
-      pass: `Gallium2026`,
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
     },
   });
 
-  const token = jwt.sign({ data: newUser }, "12345678", { expiresIn: "10m" });
+  const token = jwt.sign({ data: newUser }, secret_key, { expiresIn: "10m" });
 
   const mailBody = {
-    from: "galliumuserverification@coolair.serv00.net",
+    from: process.env.MAIL_USER,
     to: newUser.email,
     subject: "Te damos la bienvenida a Gallium",
     text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: http://localhost:3000/api/user/verify/${token}`,
@@ -34,7 +35,7 @@ async function sendVerification(newUser: User) {
 
 async function verifyEmail(token: string) {
   try {
-    const decode = jwt.verify(token, "12345678");
+    const decode = jwt.verify(token, secret_key);
     return JSON.stringify({ success: true, decode });
   } catch (err) {
     return JSON.stringify({ success: false, err });
