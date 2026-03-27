@@ -9,9 +9,9 @@ POST http://localhost:3000/api/message/
 Content-Type: application/json
 
 {
-    "body": "buenas tardes noches",
-    "sender": "69bc66d67ee3ce7652e8d727",
-    "receiver": "69bc67837ee3ce7652e8d72a"
+    "body": "buenas tardes noches jijo",
+    "sender": "69c1c86d67de13538731bfed",
+    "chatrooms": ["69bdd93d93c6c69f33433aba"]
 }
 ###
 PUT http://localhost:3000/api/message/69b56093fdf0ce31e4a22754

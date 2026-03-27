@@ -1,16 +1,6 @@
-* {
-  box-sizing: border-box;
-}
 .container {
   height: 100vh;
   width: 100vw;
-}
-.border {
-  height: 10%;
-  border: 2px solid black;
-}
-.hud {
-  height: 80%;
   display: flex;
 }
 .chat {
@@ -22,4 +12,15 @@
   height: 100%;
   width: 65%;
   border: 2px solid black;
+}
+h2 {
+  border-bottom: 2px solid black;
+  padding-left: 10px;
+}
+h3 {
+  border-bottom: 2px solid black;
+  padding: 15px 15px;
+}
+ul {
+  padding-left: 10px;
 }

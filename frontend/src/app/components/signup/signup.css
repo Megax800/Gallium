@@ -2,12 +2,12 @@ div {
   display: grid;
   place-items: center;
   height: 100vh;
-  background-image: url('../../../paginaFondo.png');
+  background-image: url('/paginaFondo.png');
   background-size: 25%;
 }
 form {
   padding: 25px;
-  height: 65%;
+  height: 70%;
   width: 25%;
   display: grid;
   border: 2px solid black;

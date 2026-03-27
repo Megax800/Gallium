@@ -1,11 +1,33 @@
+header {
+  position: fixed;
+  width: 100%;
+  z-index: 5;
+}
 nav {
-  padding: 10px;
+  padding: 15px;
+  background-color: white;
+  display: flex;
+  justify-content: right;
+}
+ul {
+  display: flex;
+  gap: 15px;
+  list-style-type: none;
+  text-align: center;
+}
+li {
+  cursor: pointer;
+}
+.hero {
+  min-height: 100vh;
   background-color: #ffc90e;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
-ul {
-  list-style-type: none;
-  text-align: right;
+.title {
+  max-width: 500px;
+}
+img {
+  max-width: 500px;
 }

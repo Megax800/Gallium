@@ -1,16 +1,17 @@
-<div class="container">
-  <div class="border"></div>
-  <div class="hud">
-    <div class="chat">
+<main>
+  <div class="container">
+    <section class="chat">
+      <div><h2>Gallium</h2></div>
       <ul>
-        @for (chat of chatrooms(); track chat._id) {
+        @for (chat of chatrooms(); track chat.id) {
           <li>
             {{ chat.chatname }}
           </li>
         }
       </ul>
-    </div>
-    <div class="messages"></div>
+    </section>
+    <section class="messages">
+      <div><h3>Nombre Chat</h3></div>
+    </section>
   </div>
-  <div class="border"></div>
-</div>
+</main>
