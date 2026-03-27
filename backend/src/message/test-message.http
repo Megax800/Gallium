@@ -9,9 +9,9 @@ POST http://localhost:3000/api/message/
 Content-Type: application/json
 
 {
-    "body": "buenas tardes noches jijo",
-    "sender": "69c1c86d67de13538731bfed",
-    "chatrooms": ["69bdd93d93c6c69f33433aba"]
+    "body": "buenas tardes noches",
+    "sender": "69beb6fba90e4291a3677e07",
+    "chatrooms": ["69beb754a90e4291a3677e08"]
 }
 ###
 PUT http://localhost:3000/api/message/69b56093fdf0ce31e4a22754
@@ -23,4 +23,4 @@ Content-Type: application/json
     "receiver": "69b55dc5fe17b6d1a8f758cb"
 }
 ###
-DELETE http://localhost:3000/api/message/69b56028988aa9dcb1108389
+DELETE http://localhost:3000/api/message/69bebbd40225e625a45f70a6

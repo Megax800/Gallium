@@ -1,45 +1,50 @@
-import 'reflect-metadata'
-import express from 'express'
-import Aedes from 'aedes'
-import net from 'net'
-import cors from 'cors'
-import { chatroomRouter } from './chatroom/chatroom.routes.js'
-import { messageRouter } from './message/message.routes.js'
-import { userRouter } from './user/user.routes.js'
-import { orm } from '../shared/db/orm.js'
-import { RequestContext } from '@mikro-orm/core'
-const app = express()  
+import "reflect-metadata";
+import express from "express";
+import Aedes from "aedes";
+import net from "net";
+import cors from "cors";
+import "dotenv/config";
+import { chatroomRouter } from "./chatroom/chatroom.routes.js";
+import { messageRouter } from "./message/message.routes.js";
+import { userRouter } from "./user/user.routes.js";
+import { orm } from "../shared/db/orm.js";
+import { RequestContext } from "@mikro-orm/core";
+const app = express();
 const aedes: Aedes = new Aedes();
 const mqttbroker = net.createServer(aedes.handle);
-const port = 3000;  
-const mqttPort = 1883; // Standard MQTT port
+const port = process.env.HTTP_PORT;
+const mqttPort = process.env.MQTT_PORT; // Standard MQTT port
 
-
-app.use(cors())
-app.use((req, res, next) =>{
-  RequestContext.create(orm.em, next)
-})
-app.use(express.json())
-app.use('/api/chatroom',chatroomRouter)
-app.use('/api/message',messageRouter)
-app.use('/api/user',userRouter)
+app.use(cors());
+app.use((req, res, next) => {
+  RequestContext.create(orm.em, next);
+});
+app.use(express.json());
+app.use("/api/chatroom", chatroomRouter);
+app.use("/api/message", messageRouter);
+app.use("/api/user", userRouter);
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`)
-})
+  console.log(`App listening on port ${port}`);
+});
 
 mqttbroker.listen(mqttPort, function () {
-  console.log('MQTT Broker listening on port', mqttPort);
+  console.log("MQTT Broker listening on port", mqttPort);
 });
 
 // Optional: You can listen to events, e.g., when a client connects or publishes
-aedes.on('client', function (client) {
-  console.log('Client connected:', client.id);
+aedes.on("client", function (client) {
+  console.log("Client connected:", client.id);
 });
 
-aedes.on('publish', function (packet, client) {
+aedes.on("publish", function (packet, client) {
   if (client) {
-    console.log('Message published by client', client.id, 'on topic', packet.topic);
+    console.log(
+      "Message published by client",
+      client.id,
+      "on topic",
+      packet.topic,
+    );
   }
 });
 

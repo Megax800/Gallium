@@ -7,7 +7,7 @@ import {
 import { User } from "../user/user.entity.js";
 import { Collection, Cascade, Rel } from "@mikro-orm/core";
 import { BaseEntity } from "../../shared/baseEntity.entity.js";
-import { Chatroom } from "../chatroom/chatroom.entity.js";
+import { Chat } from "../chatroom/chatroom.entity.js";
 
 @Entity()
 export class Message extends BaseEntity {
@@ -19,8 +19,10 @@ export class Message extends BaseEntity {
   time!: string;
   @ManyToOne(() => User)
   sender!: Rel<User>;
-  @ManyToMany(() => Chatroom, (chatrooms) => chatrooms.messages, {
+  @ManyToMany(() => Chat, (chatrooms) => chatrooms.messages, {
+    pivotTable: "messageables",
+    discriminator: "messageable",
     owner: true,
   })
-  chatrooms = new Collection<Chatroom>(this);
+  chatrooms = new Collection<Chat>(this);
 }

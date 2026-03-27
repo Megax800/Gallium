@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "./user.entity.js";
 import { orm } from "../../shared/db/orm.js";
+import { sendVerification, verifyEmail } from "./user.auth.js";
 
 const em = orm.em;
 
@@ -41,6 +42,21 @@ async function findOne(req: Request, res: Response) {
   }
 }
 
+async function addAndVerify(req: Request, res: Response) {
+  const input = req.body.sanitizeInput;
+  const buffer = new User();
+  buffer.nickname = input.nickname;
+  buffer.firstname = input.firstname;
+  buffer.lastname = input.lastname;
+  buffer.passwd = input.passwd;
+  buffer.email = input.email;
+  await sendVerification(buffer);
+  res.status(200).json({
+    message:
+      "A verification email was sent, check your inbox and follow instructions",
+  });
+}
+
 async function add(req: Request, res: Response) {
   try {
     const buffer = em.create(User, req.body);
@@ -75,4 +91,32 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeInput, findAll, findOne, add, update, remove };
+async function authenticateUser(req: Request, res: Response) {
+  const result = JSON.parse(await verifyEmail(req.params.token.toString()));
+
+  if (result.success) {
+    try {
+      em.create(User, result.decode.data);
+      await em.flush();
+      res.status(201).send({
+        message: "User Created Successfully",
+        data: result.decode.data,
+      });
+    } catch (err: any) {
+      res.status(500).send({ message: err.message });
+    }
+  } else {
+    res.status(500).send({ message: "Oops!, what happened", data: result.err });
+  }
+}
+
+export {
+  sanitizeInput,
+  findAll,
+  findOne,
+  add,
+  update,
+  remove,
+  authenticateUser,
+  addAndVerify,
+};
