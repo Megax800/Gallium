@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Chatrooms } from '../../services/chatrooms';
 import { catchError } from 'rxjs';
 import { ChatroomType } from '../../model/chatroomType';
+import { NestedMessageType } from '../../model/nestedMessageType';
 
 @Component({
   selector: 'app-chatroom',
@@ -12,6 +13,10 @@ import { ChatroomType } from '../../model/chatroomType';
 export class Chatroom implements OnInit {
   chatroomService = inject(Chatrooms);
   chatrooms = signal<Array<ChatroomType>>([]);
+  messages = signal<Array<NestedMessageType>>([]);
+  getMessages(chat: ChatroomType) {
+    this.messages.set(chat.messages);
+  }
   ngOnInit(): void {
     this.chatroomService
       .getChatrooms()

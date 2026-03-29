@@ -4,14 +4,23 @@
       <div><h2>Gallium</h2></div>
       <ul>
         @for (chat of chatrooms(); track chat.id) {
-          <li>
-            {{ chat.chatname }}
+          <li (click)="getMessages(chat)">
+            {{ chat.id }}
           </li>
         }
       </ul>
     </section>
     <section class="messages">
-      <div><h3>Nombre Chat</h3></div>
+      @if (messages().length !== 0) {
+        <div><h3>Nombre Chat</h3></div>
+        <ul>
+          @for (message of messages(); track message.id) {
+            <li>
+              {{ message.body }}
+            </li>
+          }
+        </ul>
+      }
     </section>
   </div>
 </main>
