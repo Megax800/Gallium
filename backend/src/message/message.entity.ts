@@ -20,5 +20,5 @@ export class Message extends BaseEntity {
   @ManyToOne(() => User)
   sender!: Rel<User>;
   @ManyToOne(() => Chat)
-  chatroom!: Rel<Chat>;
+  receiver!: Rel<Chat>;
 }

@@ -4,5 +4,5 @@ export type NestedMessageType = {
   date: string;
   time: string;
   sender: string;
-  chatrooms: string[];
+  receiver: string;
 };

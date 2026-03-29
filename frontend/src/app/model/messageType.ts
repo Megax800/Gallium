@@ -6,5 +6,5 @@ export type MessageType = {
   date: string;
   time: string;
   sender: string;
-  chatrooms: NestedChatroomType[];
+  receiver: string;
 };

@@ -30,7 +30,7 @@ async function findAll(req: Request, res: Response) {
     const chatrooms = await em.find(
       Chat,
       {},
-      { populate: ["users", "messages"] },
+      { populate: ["users:ref", "messages:ref"] },
     );
     res.status(200).json(chatrooms);
   } catch (err: any) {
@@ -44,7 +44,7 @@ async function findOne(req: Request, res: Response) {
     const buffer = await em.findOneOrFail(
       Chat,
       { id },
-      { populate: ["users", "messages", "admin"] },
+      { populate: ["users:ref", "messages:ref", "admin:ref"] },
     );
     res.status(200).json(buffer);
   } catch (err: any) {

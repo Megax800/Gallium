@@ -13,7 +13,7 @@ import { BaseEntity } from "../../shared/baseEntity.entity.js";
 
 @Entity()
 export class Chat extends BaseEntity {
-  @OneToMany(() => Message, (message: Message) => message.chatroom)
+  @OneToMany(() => Message, (message: Message) => message.receiver)
   messages = new Collection<Message>(this);
   @ManyToMany(() => User, (user) => user.chatrooms, {
     owner: true,
