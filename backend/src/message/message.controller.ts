@@ -70,7 +70,7 @@ async function remove(req: Request, res: Response) {
     const buffer = em.getReference(Message, id);
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ data: buffer });
+    res.status(200).json({ message: `Message ${buffer} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

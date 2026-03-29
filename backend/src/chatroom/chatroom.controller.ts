@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { orm } from "../../shared/db/orm.js";
-import { Group, Chat } from "./chatroom.entity.js";
-import { ObjectId } from "@mikro-orm/mongodb";
+import { Chat } from "./chatroom.entity.js";
+import { User } from "../user/user.entity.js";
 
 const em = orm.em;
 
@@ -11,7 +11,10 @@ function sanitizeInput(req: Request, res: Response, next: NextFunction) {
     chatname: req.body.chatname,
     isGroup: req.body.isGroup,
     description: req.body.description,
+    users: req.body.users,
+    messages: req.body.messages,
   };
+
   //more checks here
 
   Object.keys(req.body.sanitizeInput).forEach((key) => {
@@ -41,7 +44,7 @@ async function findOne(req: Request, res: Response) {
     const buffer = await em.findOneOrFail(
       Chat,
       { id },
-      { populate: ["users", "messages"] },
+      { populate: ["users", "messages", "admin"] },
     );
     res.status(200).json(buffer);
   } catch (err: any) {
@@ -51,15 +54,23 @@ async function findOne(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    const chat = new Chat();
+
+    const users = await em.find(User, {
+      id: { $in: req.body.sanitizeInput.users },
+    });
+
+    chat.users.add(users);
+    chat.isGroup = req.body.sanitizeInput.isGroup;
     if (req.body.sanitizeInput.isGroup) {
-      const buffer = em.create(Group, req.body.sanitizeInput);
-      await em.flush();
-      res.status(201).json({ data: buffer });
-    } else {
-      const buffer = em.create(Chat, req.body.sanitizeInput);
-      await em.flush();
-      res.status(201).json({ data: buffer });
+      chat.chatname = req.body.sanitizeInput.chatname;
+      chat.description = req.body.sanitizeInput.description;
+      chat.admin = await em.getReference(User, req.body.sanitizeInput.admin);
     }
+
+    em.persist(chat);
+    await em.flush();
+    return res.status(201).send(chat);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
@@ -83,7 +94,7 @@ async function remove(req: Request, res: Response) {
     const buffer = em.getReference(Chat, id);
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ data: buffer });
+    res.status(200).json({ message: `Chat ${buffer.id} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

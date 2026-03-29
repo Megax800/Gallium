@@ -17,11 +17,13 @@ POST http://localhost:3000/api/user/
 Content-Type: application/json
 
 {
-    "nickname": "malcolm2",
+    "nickname": "malcolm3",
     "firstname": "John",
     "lastname": "Egbert",
     "email": "superpowers@gmail.com",
-    "passwd": "1234"
+    "passwd": "1234",
+    "admin": [],
+    "chatrooms": []
 }
 ###
 PUT http://localhost:3000/api/user/69beb6f5a90e4291a3677e06
@@ -33,7 +35,7 @@ Content-Type: application/json
     "lastname": "Egbert",
     "email": "superpowers@mail.com",
     "passwd": "1234",
-    "chatrooms": ["69beb754a90e4291a3677e08"]
+    "chatrooms": [""]
 }
 ###
-DELETE http://localhost:3000/api/user/69bb0bbeec7302b172e75d45
+DELETE http://localhost:3000/api/user/69c939986535a62b46204c1b

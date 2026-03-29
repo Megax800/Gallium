@@ -19,10 +19,6 @@ export class Message extends BaseEntity {
   time!: string;
   @ManyToOne(() => User)
   sender!: Rel<User>;
-  @ManyToMany(() => Chat, (chatrooms) => chatrooms.messages, {
-    pivotTable: "messageables",
-    discriminator: "messageable",
-    owner: true,
-  })
-  chatrooms = new Collection<Chat>(this);
+  @ManyToOne(() => Chat)
+  chatroom!: Rel<Chat>;
 }

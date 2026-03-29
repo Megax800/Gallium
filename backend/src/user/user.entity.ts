@@ -7,7 +7,7 @@ import {
 } from "@mikro-orm/decorators/legacy";
 import { Cascade, Collection } from "@mikro-orm/core";
 import { BaseEntity } from "../../shared/baseEntity.entity.js";
-import { Chat, Group } from "../chatroom/chatroom.entity.js";
+import { Chat } from "../chatroom/chatroom.entity.js";
 import { Message } from "../message/message.entity.js";
 
 @Entity()
@@ -23,15 +23,9 @@ export class User extends BaseEntity {
   @Property({ type: "string" })
   passwd!: string;
   @ManyToMany(() => Chat, (chatroom) => chatroom.users, {
-    pivotTable: "chattables",
-    discriminator: "chattable",
-    owner: true,
+    cascade: [Cascade.ALL],
   })
   chatrooms = new Collection<Chat>(this);
   @OneToMany(() => Message, (message) => message.sender)
   messages = new Collection<Message>(this);
-  @ManyToMany(() => Group, (chatroom) => chatroom.admin, {
-    cascade: [Cascade.ALL],
-  })
-  admin = new Collection<Chat>(this);
 }
