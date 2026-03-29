@@ -1,24 +1,30 @@
 ### FIND ALL
 GET http://localhost:3000/api/chatroom 
 ###
-GET http://localhost:3000/api/chatroom/69bebcdb675bf247b2cad1f5
+GET http://localhost:3000/api/chatroom/69c934fd772b16c8f2041b7d
 ### ADD
 POST http://localhost:3000/api/chatroom/
 Content-Type: application/json
 
 {
     "isGroup": true,
-    "description": "hola"
+    "users": ["69c9a54008f40f6d968e7ed2", "69c939946535a62b46204c1a"],
+    "admin": "69c9a54008f40f6d968e7ed2",
+    "chatname": "",
+    "description": "hola",
+    "messages":[]
 }
 ###
-PUT http://localhost:3000/api/chatroom/69beb754a90e4291a3677e08
+PUT http://localhost:3000/api/chatroom/69c93a366535a62b46204c1f
 Content-Type: application/json
 
 {
-    "admin": "69bc72adad104326fa44e7be",
-    "chatname": "Johnas",
-    "isGroup": false,
-    "description": "hola"
+    "isGroup": true,
+    "users": ["69c939906535a62b46204c19", "69c939946535a62b46204c1a", "69c939986535a62b46204c1b"],
+    "admin": "69c939946535a62b46204c1a",
+    "chatname": "the psycho group 2",
+    "description": "hola",
+    "messages":[]
 }
 ###
-DELETE http://localhost:3000/api/chatroom/69bc881d90aab8ecef126ef6
+DELETE http://localhost:3000/api/chatroom/69c9a8ff118c883e6d008cd1

@@ -25,7 +25,11 @@ function sanitizeInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
-    const users = await em.find(User, {});
+    const users = await em.find(
+      User,
+      {},
+      { populate: ["chatrooms:ref", "messages:ref"] },
+    );
     res.status(200).json(users);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -35,7 +39,11 @@ async function findAll(req: Request, res: Response) {
 async function findOne(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
-    const buffer = await em.findOneOrFail(User, { id });
+    const buffer = await em.findOneOrFail(
+      User,
+      { id },
+      { populate: ["chatrooms:ref", "messages:ref"] },
+    );
     res.status(200).json(buffer);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -85,7 +93,7 @@ async function remove(req: Request, res: Response) {
     const buffer = em.getReference(User, id);
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ data: buffer });
+    res.status(200).json({ message: `User ${buffer} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

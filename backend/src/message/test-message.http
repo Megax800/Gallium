@@ -10,17 +10,17 @@ Content-Type: application/json
 
 {
     "body": "buenas tardes noches",
-    "sender": "69beb6fba90e4291a3677e07",
-    "chatrooms": ["69beb754a90e4291a3677e08"]
+    "sender": "69c939986535a62b46204c1b",
+    "chatroom": "69c93a366535a62b46204c1f"
 }
 ###
-PUT http://localhost:3000/api/message/69b56093fdf0ce31e4a22754
+PUT http://localhost:3000/api/message/69c93a7c6535a62b46204c20
 Content-Type: application/json
 
 {
     "body": "buenas noches",
-    "sender": "69b55d08c49f5f2fea9d4a9f",
-    "receiver": "69b55dc5fe17b6d1a8f758cb"
+    "sender": "69c939906535a62b46204c19",
+    "chatroom": "69c93a366535a62b46204c1f"
 }
 ###
-DELETE http://localhost:3000/api/message/69bebbd40225e625a45f70a6
+DELETE http://localhost:3000/api/message/69c93a7c6535a62b46204c20
