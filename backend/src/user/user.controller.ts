@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 import { User } from "./user.entity.js";
 import { orm } from "../../shared/db/orm.js";
 import { sendVerification, verifyEmail } from "./user.auth.js";
+import { validateOrReject } from "class-validator";
 
 const em = orm.em;
 
@@ -30,7 +31,21 @@ async function findAll(req: Request, res: Response) {
       {},
       { populate: ["chatrooms", "messages"] },
     );
-    res.status(200).json(users);
+    res.status(200).send(users);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+async function sendLoginData(req: Request, res: Response) {
+  try {
+    const id: any = req.params.id;
+    const user = await em.findOneOrFail(
+      User,
+      { id },
+      { populate: ["chatrooms:ref"], exclude: ["passwd"] },
+    );
+    res.status(200).json(user);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
@@ -49,29 +64,42 @@ async function findOne(req: Request, res: Response) {
     res.status(500).json({ message: err.message });
   }
 }
-
+//Agregar validacion de correo unico
 async function addAndVerify(req: Request, res: Response) {
-  const input = req.body.sanitizeInput;
-  const buffer = new User();
-  buffer.nickname = input.nickname;
-  buffer.firstname = input.firstname;
-  buffer.lastname = input.lastname;
-  buffer.passwd = input.passwd;
-  buffer.email = input.email;
-  await sendVerification(buffer);
-  res.status(200).json({
-    message:
-      "A verification email was sent, check your inbox and follow instructions",
-  });
+  try {
+    const input = req.body.sanitizeInput;
+    const buffer = new User();
+    await validateOrReject(buffer);
+    buffer.nickname = input.nickname;
+    buffer.firstname = input.firstname;
+    buffer.lastname = input.lastname;
+    buffer.passwd = input.passwd;
+    buffer.email = input.email;
+
+    await sendVerification(buffer);
+    res.status(200).json({
+      message:
+        "A verification email was sent, check your inbox and follow instructions",
+    });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
 }
 
 async function add(req: Request, res: Response) {
   try {
+    const checkEmail = await em.find(User, {
+      email: req.body.sanitizeInput.email,
+    });
+    if (checkEmail.length > 0) {
+      throw new Error("Email already registered");
+    }
     const buffer = em.create(User, req.body);
+    await validateOrReject(buffer, { validationError: { target: false } });
     await em.flush();
     res.status(201).json({ data: buffer });
   } catch (err: any) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ OrmError: err.message, ValidationError: err });
   }
 }
 
@@ -79,6 +107,7 @@ async function update(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
     const buffer = em.getReference(User, id);
+    await validateOrReject(req.body);
     em.assign(buffer, req.body);
     await em.flush();
     res.status(200).json({ data: buffer });
@@ -93,7 +122,7 @@ async function remove(req: Request, res: Response) {
     const buffer = em.getReference(User, id);
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ message: `User ${buffer} deleted successfully` });
+    res.status(200).json({ message: `User ${buffer.id} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
@@ -127,4 +156,5 @@ export {
   remove,
   authenticateUser,
   addAndVerify,
+  sendLoginData,
 };

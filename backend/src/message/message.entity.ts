@@ -8,10 +8,12 @@ import { User } from "../user/user.entity.js";
 import { Collection, Cascade, Rel } from "@mikro-orm/core";
 import { BaseEntity } from "../../shared/baseEntity.entity.js";
 import { Chat } from "../chatroom/chatroom.entity.js";
+import { IsEmpty } from "class-validator";
 
 @Entity()
 export class Message extends BaseEntity {
-  @Property({ type: "string" })
+  @Property({ type: "string", nullable: false })
+  @IsEmpty()
   body!: string;
   @Property({ type: "string" })
   date!: string;

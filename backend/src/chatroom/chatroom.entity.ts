@@ -10,6 +10,7 @@ import { User } from "../user/user.entity.js";
 import { Message } from "../message/message.entity.js";
 import { Cascade, Collection, Rel } from "@mikro-orm/core";
 import { BaseEntity } from "../../shared/baseEntity.entity.js";
+import { IsEmpty } from "class-validator";
 
 @Entity()
 export class Chat extends BaseEntity {
@@ -23,6 +24,7 @@ export class Chat extends BaseEntity {
   @ManyToOne(() => User, { nullable: true, cascade: [Cascade.ALL] })
   admin!: User;
   @Property({ type: "string", nullable: true })
+  @IsEmpty()
   chatname?: string;
   @Property({ type: "string", nullable: true })
   description?: string;

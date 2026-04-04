@@ -8,12 +8,14 @@ import {
   remove,
   authenticateUser,
   addAndVerify,
+  sendLoginData,
 } from "./user.controller.js";
 
 export const userRouter = Router();
 
 userRouter.get("", findAll);
 userRouter.get("/:id", findOne);
+userRouter.get("/login/:id", sendLoginData);
 userRouter.post("/", sanitizeInput, add);
 userRouter.put("/:id", sanitizeInput, update);
 userRouter.delete("/:id", remove);

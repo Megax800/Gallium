@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { Message } from "./message.entity.js";
 import { orm } from "../../shared/db/orm.js";
+import { Chat } from "../chatroom/chatroom.entity.js";
 
 const em = orm.em;
 
@@ -34,6 +35,23 @@ async function findOne(req: Request, res: Response) {
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Message, { id });
     res.status(200).json(buffer);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+async function messagesLastN(req: Request, res: Response) {
+  try {
+    const id = req.params.id;
+    const results = Number(req.params.num);
+    const messages = await em.find(
+      Message,
+      {
+        receiver: id,
+      },
+      { exclude: ["receiver"], orderBy: { id: "desc" }, limit: results },
+    );
+    res.status(200).json(messages);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
@@ -76,4 +94,4 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeInput, findAll, findOne, add, update, remove };
+export { sanitizeInput, findAll, findOne, add, update, remove, messagesLastN };

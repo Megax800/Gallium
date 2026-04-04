@@ -52,12 +52,35 @@ async function findOne(req: Request, res: Response) {
   }
 }
 
+async function getPreview(req: Request, res: Response) {
+  try {
+    const id: any = req.params.id;
+    const buffer = await em.findOneOrFail(
+      Chat,
+      { id },
+      {
+        populate: ["admin:ref", "users"],
+        exclude: [
+          "users.email",
+          "users.firstname",
+          "users.lastname",
+          "users.passwd",
+          "isGroup",
+        ],
+      },
+    );
+    res.status(200).json(buffer);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 async function add(req: Request, res: Response) {
   try {
     const chat = new Chat();
 
     const users = await em.find(User, {
-      id: { $in: req.body.sanitizeInput.users },
+      email: { $in: req.body.sanitizeInput.users },
     });
 
     chat.users.add(users);
@@ -100,4 +123,4 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeInput, findAll, findOne, add, update, remove };
+export { sanitizeInput, findAll, findOne, add, update, remove, getPreview };

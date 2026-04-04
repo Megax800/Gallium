@@ -1,15 +1,17 @@
 ### FIND ALL
 GET http://localhost:3000/api/chatroom 
 ###
-GET http://localhost:3000/api/chatroom/69c934fd772b16c8f2041b7d
+GET http://localhost:3000/api/chatroom/69c9a7ce38c69d1ee79c0536
+###
+GET http://localhost:3000/api/chatroom/preview/69c9a7ce38c69d1ee79c0536
 ### ADD
 POST http://localhost:3000/api/chatroom/
 Content-Type: application/json
 
 {
-    "isGroup": true,
-    "users": ["69c9a54008f40f6d968e7ed2", "69c939946535a62b46204c1a"],
-    "admin": "69c9a54008f40f6d968e7ed2",
+    "isGroup": false,
+    "users": ["superpowers@gmail.com", "superpowers1@gmail.com"],
+    "admin": "69c939906535a62b46204c19",
     "chatname": "",
     "description": "hola",
     "messages":[]
