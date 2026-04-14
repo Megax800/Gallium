@@ -102,8 +102,16 @@ async function add(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
+    const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(Chat, { id });
-    em.assign(buffer, req.body.sanitizeInput);
+    em.assign(buffer, data);
+    if (users) {
+      buffer.users.set(await em.find(User, { id: { $in: users } }));
+    }
+
+    if (admin) {
+      buffer.admin = await em.getReference(User, admin);
+    }
     await em.flush();
     res.status(200).json({ data: buffer });
   } catch (err: any) {

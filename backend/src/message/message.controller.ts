@@ -74,7 +74,7 @@ async function update(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
     const buffer = em.getReference(Message, id);
-    em.assign(buffer, req.body);
+    em.assign(buffer, req.body.sanitizeInput);
     await em.flush();
     res.status(200).json({ data: buffer });
   } catch (err: any) {
