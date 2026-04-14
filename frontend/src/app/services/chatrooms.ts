@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { ChatroomType } from '../model/chatroomType';
+import { ChatroomPreview } from '../dto/chatroomPreview';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Chatrooms {
   http = inject(HttpClient);
-  getChatrooms() {
-    return this.http.get<Array<ChatroomType>>('http://localhost:3000/api/chatroom');
+  getPreview(id: string) {
+    return this.http.get<ChatroomPreview>(`http://localhost:3000/api/chatroom/preview/${id}`);
   }
 }

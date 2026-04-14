@@ -64,7 +64,7 @@ async function add(req: Request, res: Response) {
     buffer.date = today.toLocaleDateString();
     buffer.time = today.toLocaleTimeString();
     await em.flush();
-    res.status(201).json({ data: buffer });
+    res.status(201).json(buffer);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

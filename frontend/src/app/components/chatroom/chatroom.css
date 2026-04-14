@@ -3,25 +3,53 @@
   width: 100vw;
   display: flex;
 }
-.chat {
+.chats {
   height: 100%;
   width: 35%;
   border: 2px solid black;
 }
-.messages {
+.gallium {
+  border-bottom: 2px solid black;
+}
+.chatroom {
   height: 100%;
   width: 65%;
   border: 2px solid black;
 }
-h2 {
+.name {
   border-bottom: 2px solid black;
+  height: 5%;
+  display: flex;
+  align-items: center;
+}
+.messages {
+  height: 90%;
+  display: flex;
+  align-items: end;
+}
+.send {
+  border-top: 2px solid black;
+  height: 5%;
+  display: flex;
+  align-items: center;
+}
+h2 {
   padding-left: 10px;
 }
 h3 {
-  border-bottom: 2px solid black;
-  padding: 15px 15px;
+  padding-left: 15px;
 }
 ul {
   padding-left: 10px;
   list-style-type: none;
+}
+input {
+  padding: 10px;
+  width: 95%;
+  border: none;
+}
+button {
+  height: 100%;
+  width: 5%;
+  border: none;
 }

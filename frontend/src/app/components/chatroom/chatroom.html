@@ -1,26 +1,41 @@
 <main>
   <div class="container">
-    <section class="chat">
-      <div><h2>Gallium</h2></div>
+    <div class="chats">
+      <div class="gallium"><h2>Gallium</h2></div>
       <ul>
-        @for (chat of chatrooms(); track chat.id) {
-          <li (click)="getMessages(chat)">
-            {{ chat.id }}
+        @for (chat of user()?.chatrooms; track chat) {
+          <li (click)="getChatrooms(chat)">
+            {{ chat }}
           </li>
         }
       </ul>
-    </section>
-    <section class="messages">
-      @if (messages().length !== 0) {
-        <div><h3>Nombre Chat</h3></div>
-        <ul>
-          @for (message of messages(); track message.id) {
-            <li>
-              {{ message.body }}
-            </li>
+    </div>
+    <div class="chatroom">
+      @if (chatrooms().length > 0) {
+        <div class="name">
+          <h3>{{ chatName() }}</h3>
+        </div>
+        <div class="messages">
+          @if (messages().length > 0) {
+            <ul>
+              @for (message of messages().slice().reverse(); track message.id) {
+                <li>
+                  {{ message.sender + ':' + message.body + ' ' + message.time }}
+                </li>
+              }
+            </ul>
           }
-        </ul>
+        </div>
+        <div class="send">
+          <input
+            [formControl]="messageControl"
+            type="text"
+            placeholder="Escribe un mensaje..."
+            (keydown.enter)="messageControl.valid ? sendMessage() : clear()"
+          />
+          <button (click)="messageControl.valid ? sendMessage() : clear()">➤</button>
+        </div>
       }
-    </section>
+    </div>
   </div>
 </main>
