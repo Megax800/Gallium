@@ -3,6 +3,7 @@ import { User } from "./user.entity.js";
 import { orm } from "../../shared/db/orm.js";
 import { sendVerification, verifyEmail } from "./user.auth.js";
 import { validateOrReject } from "class-validator";
+import { Chat } from "../chatroom/chatroom.entity.js";
 
 const em = orm.em;
 
@@ -43,9 +44,32 @@ async function sendLoginData(req: Request, res: Response) {
     const user = await em.findOneOrFail(
       User,
       { id },
-      { populate: ["chatrooms:ref"], exclude: ["passwd"] },
+      {
+        populate: ["chatrooms", "chatrooms.users"],
+        exclude: ["passwd", "chatrooms.admin", "chatrooms.description"],
+      },
     );
-    res.status(200).json(user);
+    const result = {
+      id: user.id,
+      nickname: user.nickname,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      chatrooms: user.chatrooms.getItems().map((chat) => {
+        const chatUsers = chat.users.getItems();
+
+        let chatname = chat.chatname;
+
+        if (!chat.isGroup) {
+          const otherUser = chatUsers.find((u) => u.id !== user.id);
+          chatname = otherUser?.nickname;
+        }
+
+        return { id: chat.id, chatname };
+      }),
+    };
+
+    res.status(200).json(result);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
@@ -106,9 +130,18 @@ async function add(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
-    const buffer = em.getReference(User, id);
-    await validateOrReject(req.body);
-    em.assign(buffer, req.body);
+    const { chatrooms, messages, ...data } = req.body.sanitizeInput ?? {};
+    const buffer = await em.findOneOrFail(User, id, {
+      populate: ["chatrooms", "messages"],
+    });
+    em.assign(buffer, data);
+    if (chatrooms) {
+      buffer.chatrooms.set(await em.find(Chat, { id: { $in: chatrooms } }));
+    }
+
+    if (messages) {
+      buffer.chatrooms.set(await em.find(Chat, { id: { $in: messages } }));
+    }
     await em.flush();
     res.status(200).json({ data: buffer });
   } catch (err: any) {

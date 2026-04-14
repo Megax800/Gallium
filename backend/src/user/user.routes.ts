@@ -17,7 +17,7 @@ userRouter.get("", findAll);
 userRouter.get("/:id", findOne);
 userRouter.get("/login/:id", sendLoginData);
 userRouter.post("/", sanitizeInput, add);
-userRouter.put("/:id", sanitizeInput, update);
+userRouter.patch("/:id", sanitizeInput, update);
 userRouter.delete("/:id", remove);
 userRouter.get("/verify/:token", authenticateUser);
 userRouter.post("/verify/", sanitizeInput, addAndVerify);

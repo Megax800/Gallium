@@ -17,13 +17,11 @@ Content-Type: application/json
     "receiver": "69c9a7ce38c69d1ee79c0536"
 }
 ###
-PUT http://localhost:3000/api/message/69c93a7c6535a62b46204c20
+PATCH  http://localhost:3000/api/message/69c99a8108a2972414945b8f
 Content-Type: application/json
 
 {
-    "body": "buenas noches",
-    "sender": "69c939906535a62b46204c19",
-    "receiver": "69c93a366535a62b46204c1f"
+    "body": "7 minutes is all i can spare to play with ya"
 }
 ###
 DELETE http://localhost:3000/api/message/69c93a7c6535a62b46204c20

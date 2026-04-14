@@ -14,5 +14,5 @@ messageRouter.get("", findAll);
 messageRouter.get("/:id", findOne);
 messageRouter.get("/chat/:id/:num", messagesLastN);
 messageRouter.post("/", sanitizeInput, add);
-messageRouter.put("/:id", sanitizeInput, update);
+messageRouter.patch("/:id", sanitizeInput, update);
 messageRouter.delete("/:id", remove);

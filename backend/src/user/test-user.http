@@ -2,7 +2,7 @@ GET http://localhost:3000/api/user
 ###
 GET http://localhost:3000/api/user/69c939906535a62b46204c19
 ###
-GET http://localhost:3000/api/user/login/69c939946535a62b46204c1a
+GET http://localhost:3000/api/user/login/69d4547389a98ad930542003
 ###
 POST http://localhost:3000/api/user/verify
 Content-Type: application/json
@@ -19,25 +19,21 @@ POST http://localhost:3000/api/user/
 Content-Type: application/json
 
 {
-    "nickname": "malcolm2",
+    "nickname": "thedud",
     "firstname": "John",
     "lastname": "Egbert",
-    "email": "superpowers1@gmail.com",
+    "email": "stuka@gmail.com",
     "passwd": "12345678",
     "chatrooms": [],
     "messages": []
 }
 ###
-PUT http://localhost:3000/api/user/69beb6f5a90e4291a3677e06
+PATCH  http://localhost:3000/api/user/69c939906535a62b46204c19
 Content-Type: application/json
 
 {
-    "nickname": "malcolmx",
-    "firstname": "John",
-    "lastname": "Egbert",
-    "email": "superpowers@mail.com",
-    "passwd": "1234",
-    "chatrooms": [""]
+    "passwd": "123444",
+    "chatrooms": ["69c9aa1817be65126fb37929"]
 }
 ###
 DELETE http://localhost:3000/api/user/69d1124e910cbf869b6a86f4

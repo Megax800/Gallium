@@ -10,7 +10,7 @@ Content-Type: application/json
 
 {
     "isGroup": false,
-    "users": ["superpowers@gmail.com", "superpowers1@gmail.com"],
+    "users": ["stuka@gmail.com", "girlybomb@gmail.com"],
     "admin": "69c939906535a62b46204c19",
     "chatname": "",
     "description": "hola",
