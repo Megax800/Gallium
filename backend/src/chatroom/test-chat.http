@@ -17,16 +17,11 @@ Content-Type: application/json
     "messages":[]
 }
 ###
-PUT http://localhost:3000/api/chatroom/69c93a366535a62b46204c1f
+PATCH  http://localhost:3000/api/chatroom/69c9a7ce38c69d1ee79c0536
 Content-Type: application/json
 
 {
-    "isGroup": true,
-    "users": ["69c939906535a62b46204c19", "69c939946535a62b46204c1a", "69c939986535a62b46204c1b"],
-    "admin": "69c939946535a62b46204c1a",
-    "chatname": "the psycho group 2",
-    "description": "hola",
-    "messages":[]
+    "users":["69c939946535a62b46204c1a","69c939906535a62b46204c19"]
 }
 ###
 DELETE http://localhost:3000/api/chatroom/69c9a8ff118c883e6d008cd1

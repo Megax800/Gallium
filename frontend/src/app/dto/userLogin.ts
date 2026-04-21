@@ -4,5 +4,5 @@ export type UserLogin = {
   firstname: string;
   lastname: string;
   email: string;
-  chatrooms: string[];
+  chatrooms: { id: string; chatname: string }[];
 };

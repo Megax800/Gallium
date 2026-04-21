@@ -2,7 +2,7 @@ GET http://localhost:3000/api/user
 ###
 GET http://localhost:3000/api/user/69c939906535a62b46204c19
 ###
-GET http://localhost:3000/api/user/login/69d4547389a98ad930542003
+GET http://localhost:3000/api/user/login/69c939946535a62b46204c1a
 ###
 POST http://localhost:3000/api/user/verify
 Content-Type: application/json

@@ -2,38 +2,85 @@
   <div class="container">
     <div class="chats">
       <div class="gallium"><h2>Gallium</h2></div>
-      <ul>
-        @for (chat of user()?.chatrooms; track chat) {
-          <li (click)="getChatrooms(chat)">
-            {{ chat }}
-          </li>
+      <div id="create">
+        <label><b>Crear chat</b></label
+        ><br />
+        <label>Miembros</label><br />
+        <input
+          type="text"
+          class="create"
+          placeholder="Ingrese mail y presione enter"
+          [formControl]="mailControl"
+          (keydown.enter)="mailControl.valid ? addUserMail() : clear(mailControl)"
+        /><br />
+        <ul>
+          @for (mail of usersMail(); track $index) {
+            <li>{{ mail }} <button (click)="removeUserMail(mail)">x</button></li>
+          }
+        </ul>
+        @if (usersMail().length > 1) {
+          <label>Nombre del chat</label><br />
+          <input type="text" class="create" [formControl]="chatnameControl" /><br />
+          <label>Descripción del chat</label><br />
+          <input type="text" class="create" [formControl]="descriptionControl" /><br />
         }
-      </ul>
+        <button
+          type="submit"
+          class="create"
+          [disabled]="
+            usersMail().length === 0 ||
+            ((chatnameControl.invalid || descriptionControl.invalid) && usersMail().length > 1)
+          "
+          (click)="createChatroom()"
+        >
+          Enviar
+        </button>
+      </div>
+      <div class="chatList">
+        <ul>
+          @for (chat of user()?.chatrooms; track chat.id) {
+            <li (click)="getChatrooms(chat.id, chat.chatname)">
+              {{ chat.chatname }}
+            </li>
+          }
+        </ul>
+      </div>
     </div>
     <div class="chatroom">
-      @if (chatrooms().length > 0) {
+      @if (currentChat()) {
         <div class="name">
           <h3>{{ chatName() }}</h3>
         </div>
         <div class="messages">
-          @if (messages().length > 0) {
-            <ul>
-              @for (message of messages().slice().reverse(); track message.id) {
-                <li>
-                  {{ message.sender + ':' + message.body + ' ' + message.time }}
-                </li>
+          <ul #myMessages>
+            @for (message of messages().slice().reverse(); track message.id) {
+              @if (this.lastDay !== message.date) {
+                <li class="date">{{ differentDay(message.date) }}</li>
               }
-            </ul>
-          }
+              @if (this.lastUserId !== message.sender || this.lastDay !== message.date) {
+                <li class="user">{{ differentUser(message.sender) }}</li>
+              }
+              <li>
+                {{ message.body + ' ' + message.time }}
+              </li>
+            }
+          </ul>
         </div>
         <div class="send">
           <input
+            #sendInput
             [formControl]="messageControl"
             type="text"
+            id="send"
             placeholder="Escribe un mensaje..."
-            (keydown.enter)="messageControl.valid ? sendMessage() : clear()"
+            (keydown.enter)="messageControl.valid ? sendMessage() : clear(messageControl)"
           />
-          <button (click)="messageControl.valid ? sendMessage() : clear()">➤</button>
+          <button
+            class="sendButton"
+            (click)="messageControl.valid ? sendMessage() : clear(messageControl)"
+          >
+            ➤
+          </button>
         </div>
       }
     </div>

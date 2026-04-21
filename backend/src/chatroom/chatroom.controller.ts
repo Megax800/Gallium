@@ -65,6 +65,7 @@ async function getPreview(req: Request, res: Response) {
           "users.firstname",
           "users.lastname",
           "users.passwd",
+          "chatname",
           "isGroup",
         ],
       },
@@ -93,7 +94,10 @@ async function add(req: Request, res: Response) {
 
     em.persist(chat);
     await em.flush();
-    return res.status(201).send(chat);
+    if (!chat.isGroup) {
+      chat.chatname = users[1].nickname;
+    }
+    return res.status(201).json({ id: chat.id, chatname: chat.chatname });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

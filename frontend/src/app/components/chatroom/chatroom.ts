@@ -1,4 +1,14 @@
-import { Component, inject, Input, OnInit, signal } from '@angular/core';
+import {
+  afterEveryRender,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  Input,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { catchError } from 'rxjs';
 import { User } from '../../services/user';
 import { Chatrooms } from '../../services/chatrooms';
@@ -16,6 +26,8 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 })
 export class Chatroom implements OnInit {
   @Input() id!: string;
+  myMessages = viewChild<ElementRef<HTMLUListElement>>('myMessages');
+  sendInput = viewChild<ElementRef<HTMLInputElement>>('sendInput');
   userService = inject(User);
   chatroomService = inject(Chatrooms);
   messageService = inject(Messages);
@@ -23,14 +35,76 @@ export class Chatroom implements OnInit {
   chatrooms = signal<Array<ChatroomPreview>>([]);
   messages = signal<Array<MessagesLastN>>([]);
   chatName = signal('');
-  chatId = signal('');
-  messageControl = new FormControl('', [(Validators.required, Validators.pattern(/^(?!\s*$).+/))]);
-  clear() {
-    this.messageControl.setValue('');
+  currentChat = signal<ChatroomPreview | null>(null);
+  usersMail = signal<Array<string>>([]);
+  lastUserId = '';
+  lastDay = '';
+  mailControl = new FormControl('', [Validators.required, Validators.email]);
+  chatnameControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
+  descriptionControl = new FormControl('', Validators.pattern(/.*\S.*/));
+  messageControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
+  constructor() {
+    effect(() => {
+      this.inputFocus();
+    });
+    afterEveryRender(() => {
+      if (this.messages().length) {
+        const ul = this.myMessages()?.nativeElement;
+        ul!.scrollTop = ul!.scrollHeight;
+      }
+    });
+  }
+  inputFocus() {
+    this.sendInput()?.nativeElement.focus();
+  }
+  differentUser(id: string) {
+    this.lastUserId = id;
+    return this.currentChat()?.users?.find((user) => user.id === id)?.nickname;
+  }
+  differentDay(date: string) {
+    this.lastDay = date;
+    return this.lastDay;
+  }
+  clear(control: FormControl) {
+    control.setValue('');
+  }
+  createChatroom() {
+    const isGroup = this.usersMail().length > 1;
+    this.usersMail.update((arr) => [this.user()?.email!, ...arr]);
+    this.chatroomService
+      .postChat(
+        isGroup,
+        this.user()?.id!,
+        this.usersMail(),
+        this.chatnameControl.value!.trim(),
+        this.descriptionControl.value!.trim(),
+      )
+      .pipe(
+        catchError((err) => {
+          console.log(err);
+          throw err;
+        }),
+      )
+      .subscribe((chat) => {
+        this.user.update((arr) => ({ ...arr!, chatrooms: [...arr?.chatrooms!, chat] }));
+      });
+    this.clear(this.mailControl);
+    this.clear(this.chatnameControl);
+    this.clear(this.descriptionControl);
+    this.usersMail.set([]);
+  }
+  removeUserMail(mail: string) {
+    this.usersMail.update((arr) => arr.filter((user) => user !== mail));
+  }
+  addUserMail() {
+    if (!this.usersMail().includes(this.mailControl.value!)) {
+      this.usersMail.update((arr) => [...arr, this.mailControl.value!]);
+    }
+    this.clear(this.mailControl);
   }
   sendMessage() {
     this.messageService
-      .postMessage(this.messageControl.value!.trim(), this.user()!.id, this.chatId())
+      .postMessage(this.messageControl.value!.trim(), this.user()!.id, this.currentChat()!.id)
       .pipe(
         catchError((err) => {
           console.log(err);
@@ -40,7 +114,7 @@ export class Chatroom implements OnInit {
       .subscribe((message) => {
         this.messages.update((arr) => [message, ...arr]);
       });
-    this.clear();
+    this.clear(this.messageControl);
   }
   getMessages(id: string, n: number) {
     this.messageService
@@ -55,8 +129,9 @@ export class Chatroom implements OnInit {
         this.messages.set(messages);
       });
   }
-  getChatrooms(id: string) {
-    if (!this.chatrooms().some((chat) => chat.id === id)) {
+  getChatrooms(id: string, chatname: string) {
+    const selectedChat = this.chatrooms().find((chat) => chat.id === id);
+    if (!selectedChat) {
       this.chatroomService
         .getPreview(id)
         .pipe(
@@ -67,11 +142,14 @@ export class Chatroom implements OnInit {
         )
         .subscribe((chat) => {
           this.chatrooms.update((arr) => [...arr, chat]);
+          this.currentChat.set(chat);
         });
+    } else {
+      this.currentChat.set(selectedChat);
     }
-    this.chatName.set(id); //cambiarlo a chatname
-    this.chatId.set(id);
+    this.chatName.set(chatname);
     this.getMessages(id, 25);
+    this.inputFocus();
   }
   getuser() {
     this.userService

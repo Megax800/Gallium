@@ -4,6 +4,6 @@
     <input type="text" formControlName="email" id="email" /><br />
     <label for="password">Contraseña</label>
     <input type="password" formControlName="password" id="password" /><br />
-    <button type="submit" [disabled]="!loginForm.valid">Enviar</button>
+    <button type="submit" [disabled]="loginForm.invalid">Enviar</button>
   </form>
 </div>
