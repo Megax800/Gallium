@@ -1,6 +1,7 @@
 import {
   afterEveryRender,
   Component,
+  computed,
   effect,
   ElementRef,
   inject,
@@ -17,6 +18,7 @@ import { ChatroomPreview } from '../../dto/chatroomPreview';
 import { MessagesLastN } from '../../dto/messagesLastN';
 import { Messages } from '../../services/messages';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChatIdChatname } from '../../dto/chatIdChatname';
 
 @Component({
   selector: 'app-chatroom',
@@ -32,6 +34,14 @@ export class Chatroom implements OnInit {
   chatroomService = inject(Chatrooms);
   messageService = inject(Messages);
   user = signal<UserLogin | null>(null);
+  filteredChatrooms = computed<Array<ChatIdChatname>>(() => {
+    return (
+      this.user()?.chatrooms.filter((chat) =>
+        chat.chatname.toLowerCase().includes(this.chatFilter().toLowerCase()),
+      ) ?? []
+    );
+  });
+  chatFilter = signal('');
   chatrooms = signal<Array<ChatroomPreview>>([]);
   messages = signal<Array<MessagesLastN>>([]);
   chatName = signal('');
