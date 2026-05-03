@@ -1,6 +1,7 @@
 import mailer from "nodemailer";
 import jwt from "jsonwebtoken";
 import { User } from "./user.entity";
+import { NextFunction, Request, Response } from "express";
 /*TO DO
 - Plantear un token seguro y una mejor contraseña para el correo
 */
@@ -33,7 +34,7 @@ async function sendVerification(newUser: User) {
   });
 }
 
-async function verifyEmail(token: string) {
+async function verifyData(token: string) {
   try {
     const decode = jwt.verify(token, secret_key);
     return JSON.stringify({ success: true, decode });
@@ -42,4 +43,33 @@ async function verifyEmail(token: string) {
   }
 }
 
-export { sendVerification, verifyEmail };
+async function validateToken(req: Request, res: Response, next: NextFunction) {
+  if (process.env.ENCRYPT_REQUESTS == "true") {
+    const token = req.headers.authorization;
+    req.body = req.body || {};
+    if (!token) {
+      return res.status(403).send({ message: "Empty token" });
+    } else {
+      try {
+        const token_value = jwt.verify(token, secret_key);
+        req.body.user = token_value;
+      } catch (err: any) {
+        return res
+          .status(403)
+          .send({
+            message: `Cannot proceed with operation. Reason: ${err.message}`,
+          });
+      }
+    }
+  }
+  next();
+}
+
+async function generateTokenFromObject(objectToToken: any) {
+  const token = jwt.sign({ data: objectToToken }, secret_key, {
+    expiresIn: "72h",
+  });
+  return token;
+}
+
+export { sendVerification, verifyData, validateToken, generateTokenFromObject };

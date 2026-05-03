@@ -1,9 +1,13 @@
+### Obtener todos los usuarios
 GET http://localhost:3000/api/user
-###
+
+### Obtener un usuario por id
 GET http://localhost:3000/api/user/69c939906535a62b46204c19
-###
+
+### Obtener informacion del usuario post-login (nickname, nombre y apellido, mail y chats)
 GET http://localhost:3000/api/user/login/69c939946535a62b46204c1a
-###
+
+### Enviar correo de verificacion para alta de usuario
 POST http://localhost:3000/api/user/verify
 Content-Type: application/json
 
@@ -14,7 +18,19 @@ Content-Type: application/json
     "email": "rusmanoctavio@gmail.com",
     "passwd": "1234"
 }
-###
+
+### Generar token para pruebas
+POST http://localhost:3000/api/user/test
+Content-Type: application/json
+
+{
+    "id": "69c939946535a62b46204c1a"
+}
+
+### Obtener id por correo y contraseña
+GET http://localhost:3000/api/user/superpowers2@gmail.com/123444
+
+### Alta de usuario
 POST http://localhost:3000/api/user/
 Content-Type: application/json
 
@@ -27,13 +43,17 @@ Content-Type: application/json
     "chatrooms": [],
     "messages": []
 }
-###
+
+### Modificar usuario
 PATCH  http://localhost:3000/api/user/69c939906535a62b46204c19
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6kpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjljOTM5OTA2NTM1YTYyYjQ2MjA0YzE5In0sImlhdCI6MTc3NzgxNDY0NCwiZXhwIjoxNzc4MDczODQ0fQ.xS5y0xV8sLigwjJFKoc9axS9QIiCprJWa8PY8x8v2G0
 Content-Type: application/json
 
 {
     "passwd": "123444",
     "chatrooms": ["69c9aa1817be65126fb37929"]
 }
-###
-DELETE http://localhost:3000/api/user/69d1124e910cbf869b6a86f4
+
+### Borrar Usuario
+DELETE http://localhost:3000/api/user/69f2886e220b2766c8de5582
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjlmMjg4NmUyMjBiMjc2NmM4ZGU1NTgyIn0sImlhdCI6MTc3NzgxNDc3MCwiZXhwIjoxNzc4MDczOTcwfQ.WVR3x-loBFeJN6ZGQT1_fVObrf3Ot5SjnRn0HSgYrCY

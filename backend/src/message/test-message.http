@@ -7,7 +7,7 @@ GET http://localhost:3000/api/message/69b56093fdf0ce31e4a22754
 ### Obtengo mensajes por chat
 GET http://localhost:3000/api/message/chat/69c9a7ce38c69d1ee79c0536/2
 
-###
+### Alta de mensajes
 POST http://localhost:3000/api/message/
 Content-Type: application/json
 
@@ -16,12 +16,16 @@ Content-Type: application/json
     "sender": "69c939906535a62b46204c19",
     "receiver": "69c9a7ce38c69d1ee79c0536"
 }
-###
-PATCH  http://localhost:3000/api/message/69c99a8108a2972414945b8f
+
+### Modificar mensaje
+PATCH  http://localhost:3000/api/message/69c99a8b08a2972414945b90
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjljOTM5OTQ2NTM1YTYyYjQ2MjA0YzFhIn0sImlhdCI6MTc3NzgxNTM2MSwiZXhwIjoxNzc4MDc0NTYxfQ.OtOZGtI7LB-wGyWA3qvg97XAWrTZ7Xddsy6b8aRFwQU
 Content-Type: application/json
 
 {
     "body": "7 minutes is all i can spare to play with ya"
 }
-###
-DELETE http://localhost:3000/api/message/69c93a7c6535a62b46204c20
+
+### Borrar mensaje
+DELETE http://localhost:3000/api/message/69c99a8108a2972414945b8f
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjljOTM5OTA2NTM1YTYyYjQ2MjA0YzE5In0sImlhdCI6MTc3NzgxNTAxNiwiZXhwIjoxNzc4MDc0MjE2fQ.TMUHowuEsVqLOEV2LwQvo6rqQy4TDvQVVQu8ANQKwwU

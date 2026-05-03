@@ -108,6 +108,13 @@ async function update(req: Request, res: Response) {
     const id: any = req.params.id;
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(Chat, { id });
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.data.id != (await buffer).admin) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     em.assign(buffer, data);
     if (users) {
       buffer.users.set(await em.find(User, { id: { $in: users } }));
@@ -126,10 +133,19 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
-    const buffer = em.getReference(Chat, id);
+    const buffer = await em.findOneOrFail(Chat, id);
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.data.id != (await buffer).admin) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ message: `Chat ${buffer.id} deleted successfully` });
+    res
+      .status(200)
+      .json({ message: `Chat ${(await buffer).id} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

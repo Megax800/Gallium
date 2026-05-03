@@ -32,7 +32,8 @@
     "mqtt": "^5.15.0",
     "nodemailer": "^8.0.4",
     "pnpm": "^10.30.3",
-    "reflect-metadata": "0.2.2"
+    "reflect-metadata": "0.2.2",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -1,10 +1,13 @@
-### FIND ALL
+### Obtener todos los chats
 GET http://localhost:3000/api/chatroom 
-###
+
+### Obtener un chat
 GET http://localhost:3000/api/chatroom/69c9a7ce38c69d1ee79c0536
-###
+
+### Obtengo los usuarios de un chat
 GET http://localhost:3000/api/chatroom/preview/69c9a7ce38c69d1ee79c0536
-### ADD
+
+### Alta de un chat
 POST http://localhost:3000/api/chatroom/
 Content-Type: application/json
 
@@ -16,12 +19,16 @@ Content-Type: application/json
     "description": "hola",
     "messages":[]
 }
-###
+
+### Modificar chat
 PATCH  http://localhost:3000/api/chatroom/69c9a7ce38c69d1ee79c0536
+Authorization: 
 Content-Type: application/json
 
 {
     "users":["69c939946535a62b46204c1a","69c939906535a62b46204c19"]
 }
-###
+
+### Borrar chat
 DELETE http://localhost:3000/api/chatroom/69c9a8ff118c883e6d008cd1
+Authorization: 

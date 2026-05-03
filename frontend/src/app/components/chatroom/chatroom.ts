@@ -12,6 +12,7 @@ import {
 import { catchError } from 'rxjs';
 import { User } from '../../services/user';
 import { Chatrooms } from '../../services/chatrooms';
+import { ChatService } from '../../services/websocket-service';
 import { UserLogin } from '../../dto/userLogin';
 import { ChatroomPreview } from '../../dto/chatroomPreview';
 import { MessagesLastN } from '../../dto/messagesLastN';
@@ -43,7 +44,7 @@ export class Chatroom implements OnInit {
   chatnameControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
   descriptionControl = new FormControl('', Validators.pattern(/.*\S.*/));
   messageControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
-  constructor() {
+  constructor(private socket: ChatService) {
     effect(() => {
       this.inputFocus();
     });
@@ -114,6 +115,7 @@ export class Chatroom implements OnInit {
       .subscribe((message) => {
         this.messages.update((arr) => [message, ...arr]);
       });
+    this.socket.sendMessage(this.messageControl.value!.trim(), this.currentChat()!.id);
     this.clear(this.messageControl);
   }
   getMessages(id: string, n: number) {
@@ -131,6 +133,7 @@ export class Chatroom implements OnInit {
   }
   getChatrooms(id: string, chatname: string) {
     const selectedChat = this.chatrooms().find((chat) => chat.id === id);
+    this.socket.joinChats([id]);
     if (!selectedChat) {
       this.chatroomService
         .getPreview(id)
@@ -166,5 +169,6 @@ export class Chatroom implements OnInit {
   }
   ngOnInit(): void {
     this.getuser();
+    this.socket.onMessage((msg: string) => {});
   }
 }
