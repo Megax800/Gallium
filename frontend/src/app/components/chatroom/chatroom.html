@@ -37,8 +37,16 @@
         </button>
       </div>
       <div class="chatList">
+        <input
+          #inputFilter
+          type="text"
+          class="inputFilter"
+          name="inputFilter"
+          placeholder="Buscar un chat..."
+          (input)="chatFilter.set(inputFilter.value)"
+        />
         <ul>
-          @for (chat of user()?.chatrooms; track chat.id) {
+          @for (chat of filteredChatrooms(); track chat.id) {
             <li (click)="getChatrooms(chat.id, chat.chatname)">
               {{ chat.chatname }}
             </li>
@@ -71,7 +79,8 @@
             #sendInput
             [formControl]="messageControl"
             type="text"
-            id="send"
+            class="sendInput"
+            name="sendInput"
             placeholder="Escribe un mensaje..."
             (keydown.enter)="messageControl.valid ? sendMessage() : clear(messageControl)"
           />
