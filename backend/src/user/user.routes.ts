@@ -25,4 +25,4 @@ userRouter.delete("/:id", validateToken, remove);
 userRouter.get("/verify/:token", authenticateUser);
 userRouter.post("/verify/", sanitizeInput, addAndVerify);
 userRouter.post("/test/", getToken);
-userRouter.get("/:email/:pass", getId);
+userRouter.post("/auth/login", sanitizeInput, getId);

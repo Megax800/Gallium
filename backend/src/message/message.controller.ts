@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { Message } from "./message.entity.js";
-import { orm } from "../../shared/db/orm.js";
+import { getORM } from "../../shared/db/orm.js";
 import { Chat } from "../chatroom/chatroom.entity.js";
 
+const orm = await getORM();
 const em = orm.em;
 
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {

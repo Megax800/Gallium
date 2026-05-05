@@ -1,13 +1,22 @@
 import { MikroORM } from "@mikro-orm/core";
-import { MongoHighlighter } from "@mikro-orm/mongo-highlighter";
-import { MongoDriver } from "@mikro-orm/mongodb";
+import mikroOrmConfig from "./mikro-orm.config.js";
 
-export const orm = await MikroORM.init({
-  entities: ["dist/src/**/*.entity.js"],
-  entitiesTs: ["src/**/*.entity.ts"],
-  driver: MongoDriver,
-  dbName: process.env.DB_NAME,
-  clientUrl: process.env.DB_URL_STRING,
-  highlighter: new MongoHighlighter(),
-  debug: true,
-});
+let ormInstance: MikroORM | null = null;
+
+export const initORM = async () => {
+  if (!ormInstance) {
+    ormInstance = await MikroORM.init(mikroOrmConfig);
+  }
+  return ormInstance;
+};
+
+export const setORM = (orm: MikroORM) => {
+  ormInstance = orm;
+};
+
+export const getORM = async () => {
+  if (!ormInstance) {
+    ormInstance = await MikroORM.init(mikroOrmConfig);
+  }
+  return ormInstance;
+};

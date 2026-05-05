@@ -12,11 +12,11 @@ POST http://localhost:3000/api/user/verify
 Content-Type: application/json
 
 {
-    "nickname": "m",
-    "firstname": "John",
-    "lastname": "Egbert",
-    "email": "rusmanoctavio@gmail.com",
-    "passwd": "1234"
+    "nickname": "CoolAir",
+    "firstname": "Pedro",
+    "lastname": "Lolas",
+    "email": "",
+    "passwd": ""
 }
 
 ### Generar token para pruebas
@@ -27,8 +27,14 @@ Content-Type: application/json
     "id": "69c939946535a62b46204c1a"
 }
 
-### Obtener id por correo y contraseña
-GET http://localhost:3000/api/user/superpowers2@gmail.com/123444
+### Obtener token de sesion por correo y contraseña
+POST http://localhost:3000/api/user/auth/login/
+Content-Type: application/json
+
+{
+    "passwd": "12345678",
+    "email": "stuka@gmail.com"
+}
 
 ### Alta de usuario
 POST http://localhost:3000/api/user/

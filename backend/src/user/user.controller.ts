@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { User } from "./user.entity.js";
-import { orm } from "../../shared/db/orm.js";
+import { getORM } from "../../shared/db/orm.js";
 import {
   generateTokenFromObject,
   sendVerification,
@@ -9,6 +9,7 @@ import {
 import { validateOrReject } from "class-validator";
 import { Chat } from "../chatroom/chatroom.entity.js";
 
+const orm = await getORM();
 const em = orm.em;
 
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
@@ -96,16 +97,17 @@ async function findOne(req: Request, res: Response) {
 async function getId(req: Request, res: Response) {
   try {
     const user = await em.findOne(User, {
-      email: req.params.email,
+      email: req.body.sanitizeInput.email,
     });
     if (user != undefined) {
-      if (user.passwd != req.params.pass) {
+      if (user.passwd != req.body.sanitizeInput.passwd) {
         throw Error("Password not match");
       } else {
-        res.status(200).send({ id: user.id });
+        const token = generateTokenFromObject(req.body);
+        return res.status(200).json({ data: (await token).toString() });
       }
     } else {
-      throw Error(`User with email ${req.body.user.data.email} dont exist`);
+      throw Error(`User with email ${req.body.sanitizeInput.email} dont exist`);
     }
   } catch (err: any) {
     res.status(500).send({ error: err.message });
@@ -208,10 +210,7 @@ async function authenticateUser(req: Request, res: Response) {
     try {
       em.create(User, result.decode.data);
       await em.flush();
-      res.status(201).send({
-        message: "User Created Successfully",
-        data: result.decode.data,
-      });
+      res.redirect(301, `http://localhost:4200/login/`);
     } catch (err: any) {
       res.status(500).send({ message: err.message });
     }

@@ -8,7 +8,7 @@ import { Server } from "socket.io";
 import { chatroomRouter } from "./chatroom/chatroom.routes.js";
 import { messageRouter } from "./message/message.routes.js";
 import { userRouter } from "./user/user.routes.js";
-import { orm } from "../shared/db/orm.js";
+import { getORM, initORM } from "../shared/db/orm.js";
 import { RequestContext } from "@mikro-orm/core";
 import { createServer } from "http";
 const app = express();
@@ -20,6 +20,9 @@ const io = new Server(server, {
 });
 const port = process.env.HTTP_PORT;
 const mqttPort = process.env.MQTT_PORT; // Standard MQTT port
+
+await initORM();
+const orm = await getORM();
 
 app.use(cors());
 app.use((req, res, next) => {
@@ -74,6 +77,8 @@ io.on("connection", (socket: any) => {
     console.log(`user ${socket.userId} send message ${body} for ${receiver}`);
   });
 });
+
+export { app };
 
 /*aedes.on('subscribe', (packet, client) =>{
   if (client) {

@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { orm } from "../../shared/db/orm.js";
+import { getORM } from "../../shared/db/orm.js";
 import { Chat } from "./chatroom.entity.js";
 import { User } from "../user/user.entity.js";
 
+const orm = await getORM();
 const em = orm.em;
 
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
@@ -117,7 +118,7 @@ async function update(req: Request, res: Response) {
     }
     em.assign(buffer, data);
     if (users) {
-      buffer.users.set(await em.find(User, { id: { $in: users } }));
+      buffer.users.set(await em.find(User, { email: { $in: users } }));
     }
 
     if (admin) {

@@ -2,7 +2,7 @@
 GET http://localhost:3000/api/chatroom 
 
 ### Obtener un chat
-GET http://localhost:3000/api/chatroom/69c9a7ce38c69d1ee79c0536
+GET http://localhost:3000/api/chatroom/69e032099519df6052040946
 
 ### Obtengo los usuarios de un chat
 GET http://localhost:3000/api/chatroom/preview/69c9a7ce38c69d1ee79c0536
@@ -21,12 +21,12 @@ Content-Type: application/json
 }
 
 ### Modificar chat
-PATCH  http://localhost:3000/api/chatroom/69c9a7ce38c69d1ee79c0536
+PATCH  http://localhost:3000/api/chatroom/69e032099519df6052040946
 Authorization: 
 Content-Type: application/json
 
 {
-    "users":["69c939946535a62b46204c1a","69c939906535a62b46204c19"]
+    "users":["superpowers@gmail.com","girlybomb@gmail.com"]
 }
 
 ### Borrar chat
