@@ -14,12 +14,12 @@
 ## Tema
 
 ### Descripcion
-GalliumChat es un servicio de mensajeria instantanea que permite la comunicacion entre dos o mas personas mediante el envio de mensajes por la web, ya sea a traves de la plataforma web o por medio del GalliumCommunicator, un dispositivo portatil cuyo proposito es el envio y recepcion de los mensajes de la plataforma que esten asociados a la cuenta del dueño, todo a traves de una conexion WiFi, sin necesidad de disponer de una computadora o celular para estar conectado.
+Gallium es un servicio de mensajeria instantanea basado en web que permite a los usuarios enviar y recibir mensajes en tiempo real, ya sea entre dos usuarios o entre varios por medio de chats grupales. Gallium busca ser intuitivo y amigable con el usuario a la vez que mantiene una estetica sobria y minimalista, centrandose solo en las funciones esenciales que determinan un servicio de chat
 
 
 ### Modelo
 
-![Diagrama Entidad-Relacion]()
+![Diagrama Entidad-Relacion](Modelo-Dominio.svg)
 
 ## Alcance Funcional
 
@@ -29,14 +29,14 @@ GalliumChat es un servicio de mensajeria instantanea que permite la comunicacion
 
 | Req                | Detalle                                                                                                                                                                       |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CRUD Simple        | 1. CRUD Chatroom <br> 2. CRUD Usuario                                                                                                                |
+| CRUD Simple        | 1. CRUD Chat <br> 2. CRUD Usuario                                                                                                                |
 | CRUD Dependiente   |   |
-| Listado \+ detalle |                                      |
+| Listado \+ detalle | 1. Busqueda de usuarios pertenecientes a un grupo <br> 2. Listado de chats(nombre, descripcion, usuarios, mensajes)|
 | CUU/Epic           | 1. Crear Chatroom <br> 2. Crear Usuario                                                                                                    |
 
 - Aprobacion Directa
 
 | Req      | Detalle                                                                                                                                       |
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| CRUD     | |
-| CUU/Epic | |
+| CRUD     | 1. CRUD Chat <br> 2. CRUD Usuario 3. CRUD Mensaje|
+| CUU/Epic | 1. Alta de Usuario <br> 2. Crear Chat Grupal <br> 3. Enviar un Mensaje <br> 4. Modificar un Chat Grupal <br> 5. Borrar un Chat Grupal|
