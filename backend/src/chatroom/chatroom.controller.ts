@@ -123,6 +123,87 @@ async function update(req: Request, res: Response) {
   }
 }
 
+async function updateChatname(req: Request, res: Response) {
+  try {
+    const id: any = req.params.id;
+    const { users, admin, ...data } = req.body.sanitizeInput ?? {};
+    const buffer = await em.findOneOrFail(Chat, { id });
+    em.assign(buffer, data);
+    if (users) {
+      buffer.users.set(await em.find(User, { id: { $in: users } }));
+    }
+
+    if (admin) {
+      buffer.admin = await em.getReference(User, admin);
+    }
+    await em.flush();
+    res.status(200).json(buffer.chatname);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+async function addUsers(req: Request, res: Response) {
+  try {
+    const id: any = req.params.id;
+    const { users, admin, ...data } = req.body.sanitizeInput ?? {};
+    const buffer = await em.findOneOrFail(
+      Chat,
+      { id },
+      { populate: ["users"] },
+    );
+    em.assign(buffer, data);
+    if (users) {
+      buffer.users.add(await em.find(User, { email: { $in: users } }));
+    }
+
+    if (admin) {
+      buffer.admin = await em.getReference(User, admin);
+    }
+    await em.flush();
+    const result = buffer.users.getItems().map((user) => ({
+      id: user.id,
+      nickname: user.nickname,
+    }));
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+async function removeUsers(req: Request, res: Response) {
+  try {
+    const id: any = req.params.id;
+    const { users, admin, ...data } = req.body.sanitizeInput ?? {};
+    const buffer = await em.findOneOrFail(
+      Chat,
+      { id },
+      { populate: ["users"] },
+    );
+    em.assign(buffer, data);
+    if (users) {
+      const userToRemove = buffer.users
+        .getItems()
+        .find((user) => users.includes(user.id));
+      if (userToRemove) {
+        buffer.users.remove(userToRemove);
+      }
+    }
+
+    if (admin) {
+      buffer.admin = await em.getReference(User, admin);
+    }
+    await em.flush();
+    const result = buffer.users.getItems().map((user) => ({
+      id: user.id,
+      nickname: user.nickname,
+    }));
+    res.status(200).json(result);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 async function remove(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
@@ -135,4 +216,15 @@ async function remove(req: Request, res: Response) {
   }
 }
 
-export { sanitizeInput, findAll, findOne, add, update, remove, getPreview };
+export {
+  sanitizeInput,
+  findAll,
+  findOne,
+  add,
+  update,
+  remove,
+  getPreview,
+  updateChatname,
+  addUsers,
+  removeUsers,
+};

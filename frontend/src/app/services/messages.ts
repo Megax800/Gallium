@@ -17,4 +17,7 @@ export class Messages {
       receiver: receiver,
     });
   }
+  deleteMessage(id: string) {
+    return this.http.delete(`http://localhost:3000/api/message/${id}`);
+  }
 }

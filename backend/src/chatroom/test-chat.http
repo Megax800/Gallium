@@ -24,4 +24,11 @@ Content-Type: application/json
     "users":["69c939946535a62b46204c1a","69c939906535a62b46204c19"]
 }
 ###
+PATCH  http://localhost:3000/api/chatroom/users/69e032099519df6052040946
+Content-Type: application/json
+
+{
+    "users": ["stuka@gmail.com"]
+}
+###
 DELETE http://localhost:3000/api/chatroom/69c9a8ff118c883e6d008cd1

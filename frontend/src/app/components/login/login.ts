@@ -12,6 +12,12 @@ export class Login {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required),
   });
+  get email() {
+    return this.loginForm.controls.email;
+  }
+  get password() {
+    return this.loginForm.controls.password;
+  }
   onSubmit() {
     console.log(this.loginForm.value);
   }

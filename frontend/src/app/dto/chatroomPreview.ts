@@ -1,6 +1,8 @@
+import { UserIdNickname } from './userIdNickname';
+
 export type ChatroomPreview = {
   id: string;
-  users: { id: string; nickname: string }[];
+  users: UserIdNickname[];
   admin?: string;
   description?: string;
 };
