@@ -18,10 +18,9 @@ export class Chat extends BaseEntity {
   messages = new Collection<Message>(this);
   @ManyToMany(() => User, (user) => user.chatrooms, {
     owner: true,
-    cascade: [Cascade.ALL],
   })
   users = new Collection<User>(this);
-  @ManyToOne(() => User, { nullable: true, cascade: [Cascade.ALL] })
+  @ManyToOne(() => User, { nullable: true })
   admin!: User;
   @Property({ type: "string", nullable: true })
   @IsEmpty()

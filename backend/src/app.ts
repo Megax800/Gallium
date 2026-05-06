@@ -58,7 +58,7 @@ aedes.on("publish", function (packet, client) {
 });
 
 io.use((socket: any, next) => {
-  const userId = socket.handshake.auth.userId;
+  const userId = socket.handshake.auth.token;
 
   socket.userId = userId;
   next();
@@ -66,15 +66,21 @@ io.use((socket: any, next) => {
 
 io.on("connection", (socket: any) => {
   console.log("a user connected", socket.userId);
-
-  socket.on("join", (chatrooms: string[]) => {
-    socket.join(chatrooms);
-    console.log("user joined on chatrooms ", chatrooms);
+  socket.on("sendMessage", (message: any, room: string) => {
+    socket.to(room).emit("receiveMessage", message);
   });
-  socket.on("disconnect", () => console.log("user disconnected"));
-  socket.on("message", (body: string, receiver: string) => {
-    socket.to(receiver).emit("message", { body, sender: socket.userId });
-    console.log(`user ${socket.userId} send message ${body} for ${receiver}`);
+  socket.on("joinChat", (room: string) => {
+    socket.join(room);
+  });
+  socket.on("leaveChat", (room: string) => {
+    socket.leave(room);
+  });
+  socket.on("deleteMessage", (id: string, room: string) => {
+    socket.to(room).emit("messageDeleted", id);
+  });
+  socket.on("deleteUser", (users: any, room: string) => {
+    const allUsers = { users, room };
+    socket.broadcast.emit("userDeleted", allUsers);
   });
 });
 

@@ -103,8 +103,10 @@ async function getId(req: Request, res: Response) {
       if (user.passwd != req.body.sanitizeInput.passwd) {
         throw Error("Password not match");
       } else {
-        const token = generateTokenFromObject(req.body);
-        return res.status(200).json({ data: (await token).toString() });
+        const token = generateTokenFromObject(user._id);
+        return res
+          .status(200)
+          .json({ token: (await token).toString(), id: user.id });
       }
     } else {
       throw Error(`User with email ${req.body.sanitizeInput.email} dont exist`);
@@ -127,10 +129,11 @@ async function addAndVerify(req: Request, res: Response) {
     buffer.email = input.email;
 
     await sendVerification(buffer);
-    res.status(200).json({
-      message:
+    res
+      .status(200)
+      .json(
         "A verification email was sent, check your inbox and follow instructions",
-    });
+      );
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

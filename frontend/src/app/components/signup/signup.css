@@ -19,3 +19,8 @@ input.ng-invalid.ng-touched {
 form > small {
   color: red;
 }
+form > div {
+  height: 50px;
+  color: green;
+  background-image: none;
+}

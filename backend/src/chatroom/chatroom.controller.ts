@@ -110,7 +110,7 @@ async function update(req: Request, res: Response) {
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(Chat, { id });
     if (process.env.ENCRYPT_REQUESTS == "true") {
-      if (req.body.user.data.id != (await buffer).admin) {
+      if (req.body.user.id != (await buffer).admin._id?.toString()) {
         throw Error(
           "The user don't have privileges to do the current operation",
         );
@@ -136,6 +136,13 @@ async function updateChatname(req: Request, res: Response) {
     const id: any = req.params.id;
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(Chat, { id });
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.id != (await buffer).admin._id?.toString()) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     em.assign(buffer, data);
     if (users) {
       buffer.users.set(await em.find(User, { id: { $in: users } }));
@@ -160,6 +167,13 @@ async function addUsers(req: Request, res: Response) {
       { id },
       { populate: ["users"] },
     );
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.id != (await buffer).admin._id?.toString()) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     em.assign(buffer, data);
     if (users) {
       buffer.users.add(await em.find(User, { email: { $in: users } }));
@@ -188,6 +202,13 @@ async function removeUsers(req: Request, res: Response) {
       { id },
       { populate: ["users"] },
     );
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.id != (await buffer).admin._id?.toString()) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     em.assign(buffer, data);
     if (users) {
       const userToRemove = buffer.users
@@ -217,7 +238,7 @@ async function remove(req: Request, res: Response) {
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Chat, id);
     if (process.env.ENCRYPT_REQUESTS == "true") {
-      if (req.body.user.data.id != (await buffer).admin) {
+      if (req.body.user.id != (await buffer).admin._id?.toString()) {
         throw Error(
           "The user don't have privileges to do the current operation",
         );

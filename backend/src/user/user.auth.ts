@@ -45,20 +45,19 @@ async function verifyData(token: string) {
 
 async function validateToken(req: Request, res: Response, next: NextFunction) {
   if (process.env.ENCRYPT_REQUESTS == "true") {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
     req.body = req.body || {};
-    if (!token) {
+    if (!authHeader) {
       return res.status(403).send({ message: "Empty token" });
     } else {
       try {
+        const token = authHeader.split(" ")[1];
         const token_value = jwt.verify(token, secret_key);
         req.body.user = token_value;
       } catch (err: any) {
-        return res
-          .status(403)
-          .send({
-            message: `Cannot proceed with operation. Reason: ${err.message}`,
-          });
+        return res.status(403).send({
+          message: `Cannot proceed with operation. Reason: ${err.message}`,
+        });
       }
     }
   }
@@ -66,7 +65,7 @@ async function validateToken(req: Request, res: Response, next: NextFunction) {
 }
 
 async function generateTokenFromObject(objectToToken: any) {
-  const token = jwt.sign({ data: objectToToken }, secret_key, {
+  const token = jwt.sign({ id: objectToToken }, secret_key, {
     expiresIn: "72h",
   });
   return token;

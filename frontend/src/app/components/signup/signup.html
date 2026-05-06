@@ -41,6 +41,9 @@
         >
       }
     }
+    @if (this.emailSent()) {
+      <div>Se le envió un correo para activar su cuenta</div>
+    }
     <button type="submit" [disabled]="signupForm.invalid">Enviar</button>
   </form>
 </div>

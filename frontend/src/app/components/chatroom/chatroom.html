@@ -62,12 +62,12 @@
           </div>
           <div class="messages">
             <ul #myMessages>
-              @for (message of messages().slice().reverse(); track message.id) {
-                @if (this.lastDay !== message.date) {
-                  <li class="date">{{ differentDay(message.date) }}</li>
+              @for (message of processedMessages(); track message.id) {
+                @if (message.showDay) {
+                  <li class="date">{{ message.date }}</li>
                 }
-                @if (this.lastUserId !== message.sender || this.lastDay !== message.date) {
-                  <li class="user">{{ differentUser(message.sender) }}</li>
+                @if (message.showUser) {
+                  <li class="user">{{ message.nickname }}</li>
                 }
                 <li>
                   {{ message.body + ' ' + message.time }}

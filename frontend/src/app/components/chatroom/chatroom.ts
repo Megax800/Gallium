@@ -13,7 +13,6 @@ import {
 import { catchError } from 'rxjs';
 import { User } from '../../services/user';
 import { Chatrooms } from '../../services/chatrooms';
-import { ChatService } from '../../services/websocket-service';
 import { UserLogin } from '../../dto/userLogin';
 import { ChatroomPreview } from '../../dto/chatroomPreview';
 import { MessagesLastN } from '../../dto/messagesLastN';
@@ -23,6 +22,7 @@ import { ChatIdChatname } from '../../dto/chatIdChatname';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { WebSocketService } from '../../services/webSocketService';
 
 @Component({
   selector: 'app-chatroom',
@@ -31,12 +31,12 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './chatroom.css',
 })
 export class Chatroom implements OnInit {
-  @Input() id!: string;
   myMessages = viewChild<ElementRef<HTMLUListElement>>('myMessages');
   sendInput = viewChild<ElementRef<HTMLInputElement>>('sendInput');
   nameInput = viewChild<ElementRef<HTMLInputElement>>('nameInput');
   addUser = viewChild<ElementRef<HTMLInputElement>>('addUser');
   info = viewChild<MatDrawer>('info');
+  webSocketService = inject(WebSocketService);
   userService = inject(User);
   chatroomService = inject(Chatrooms);
   messageService = inject(Messages);
@@ -47,6 +47,25 @@ export class Chatroom implements OnInit {
         chat.chatname.toLowerCase().includes(this.chatFilter().toLowerCase()),
       ) ?? []
     );
+  });
+  processedMessages = computed(() => {
+    let lastDay: string | null = null;
+    let lastUser: string | null = null;
+    return this.messages()
+      .slice()
+      .reverse()
+      .map((msg) => {
+        const showDay = msg.date !== lastDay;
+        const showUser = msg.sender !== lastUser || showDay;
+        lastDay = msg.date;
+        lastUser = msg.sender;
+        return {
+          ...msg,
+          showDay,
+          showUser,
+          nickname: this.currentChat()?.users?.find((user) => user.id === msg.sender)?.nickname,
+        };
+      });
   });
   chatFilter = signal('');
   chatrooms = signal<Array<ChatroomPreview>>([]);
@@ -94,7 +113,7 @@ export class Chatroom implements OnInit {
       .subscribe(() => {
         this.user.update((user) => ({
           ...user!,
-          chatrooms: this.user()!.chatrooms.filter((chat) => chat.id !== id),
+          chatrooms: user!.chatrooms.filter((chat) => chat.id !== id),
         }));
         this.chatrooms.set(this.chatrooms().filter((chat) => chat.id !== id));
         this.currentChat.set(null);
@@ -119,6 +138,7 @@ export class Chatroom implements OnInit {
           ...chat!,
           users: allUsers,
         }));
+        this.webSocketService.deleteUser(allUsers);
       });
   }
   addUsersChat(id: string) {
@@ -160,6 +180,12 @@ export class Chatroom implements OnInit {
       )
       .subscribe((chatname: string) => {
         this.chatName.set(chatname);
+        this.user.update((user) => ({
+          ...user!,
+          chatrooms: user!.chatrooms.map((chat) =>
+            chat.id === id ? { ...chat, chatname: chatname } : chat,
+          ),
+        }));
       });
   }
   editName() {
@@ -175,14 +201,6 @@ export class Chatroom implements OnInit {
   inputFocus() {
     this.sendInput()?.nativeElement.focus();
   }
-  differentUser(id: string) {
-    this.lastUserId = id;
-    return this.currentChat()?.users?.find((user) => user.id === id)?.nickname;
-  }
-  differentDay(date: string) {
-    this.lastDay = date;
-    return this.lastDay;
-  }
   clear(control: FormControl) {
     control.setValue('');
   }
@@ -197,6 +215,7 @@ export class Chatroom implements OnInit {
       )
       .subscribe(() => {
         this.messages.set(this.messages().filter((message) => message.id !== id));
+        this.webSocketService.deleteMessage(id);
       });
   }
   createChatroom() {
@@ -244,8 +263,8 @@ export class Chatroom implements OnInit {
       )
       .subscribe((message) => {
         this.messages.update((arr) => [message, ...arr]);
+        this.webSocketService.sendMessage(message);
       });
-    //this.socket.sendMessage(this.messageControl.value!.trim(), this.currentChat()!.id);
     this.clear(this.messageControl);
   }
   getMessages(id: string, n: number) {
@@ -281,6 +300,7 @@ export class Chatroom implements OnInit {
       this.currentChat.set(selectedChat);
     }
     this.chatName.set(chatname);
+    this.webSocketService.joinChat(id);
     this.changeNameControl.setValue(chatname);
     this.setBooleansFalse();
     this.getMessages(id, 25);
@@ -288,7 +308,7 @@ export class Chatroom implements OnInit {
   }
   getuser() {
     this.userService
-      .getUser(this.id)
+      .getUser()
       .pipe(
         catchError((err) => {
           console.log(err);
@@ -301,6 +321,38 @@ export class Chatroom implements OnInit {
   }
   ngOnInit(): void {
     this.getuser();
-    //this.socket.onMessage((msg: string) => {});
+    this.webSocketService.receiveMessage().subscribe((message) => {
+      this.messages.update((arr) => [message, ...arr]);
+    });
+    this.webSocketService.messageDeleted().subscribe((id) => {
+      this.messages.set(this.messages().filter((message) => message.id !== id));
+    });
+    this.webSocketService.userDeleted().subscribe((allUsers) => {
+      if (this.currentChat()?.id === allUsers.room) {
+        if (allUsers.users.some((user) => user.id === this.user()?.id)) {
+          this.currentChat.update((chat) => ({
+            ...chat!,
+            users: allUsers.users,
+          }));
+        } else {
+          this.user.update((user) => ({
+            ...user!,
+            chatrooms: user!.chatrooms.filter((chat) => chat.id !== allUsers.room),
+          }));
+          this.chatrooms.set(this.chatrooms().filter((chat) => chat.id !== allUsers.room));
+          this.currentChat.set(null);
+          this.info()?.close();
+        }
+      }
+      if (
+        this.currentChat()?.id !== allUsers.room &&
+        !allUsers.users.some((user) => user.id === this.user()?.id)
+      ) {
+        this.user.update((user) => ({
+          ...user!,
+          chatrooms: user!.chatrooms.filter((chat) => chat.id !== allUsers.room),
+        }));
+      }
+    });
   }
 }
