@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 import { Message } from "./message.entity.js";
-import { orm } from "../../shared/db/orm.js";
+import { getORM } from "../../shared/db/orm.js";
 import { Chat } from "../chatroom/chatroom.entity.js";
 
+const orm = await getORM();
 const em = orm.em;
 
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
@@ -73,7 +74,14 @@ async function add(req: Request, res: Response) {
 async function update(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
-    const buffer = em.getReference(Message, id);
+    const buffer = await em.findOneOrFail(Message, id);
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.data.id != (await buffer).sender.id) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     em.assign(buffer, req.body.sanitizeInput);
     await em.flush();
     res.status(200).json({ data: buffer });
@@ -85,10 +93,19 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const id: any = req.params.id;
-    const buffer = em.getReference(Message, id);
+    const buffer = await em.findOneOrFail(Message, { id });
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.data.id != (await buffer).sender.id) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ message: `Message ${buffer} deleted successfully` });
+    res
+      .status(200)
+      .json({ message: `Message ${await buffer.id} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }

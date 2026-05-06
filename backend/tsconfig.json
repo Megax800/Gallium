@@ -12,6 +12,7 @@
     "alwaysStrict": true,
     "skipLibCheck": true,
     "emitDecoratorMetadata": true,
+    "types": ["node", "jest"],
     "experimentalDecorators": true
   },
   "include": ["src/**/*", "**/*.ts"],

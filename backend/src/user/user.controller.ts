@@ -1,10 +1,15 @@
-import { Request, Response, NextFunction, response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { User } from "./user.entity.js";
-import { orm } from "../../shared/db/orm.js";
-import { sendVerification, verifyEmail } from "./user.auth.js";
+import { getORM } from "../../shared/db/orm.js";
+import {
+  generateTokenFromObject,
+  sendVerification,
+  verifyData,
+} from "./user.auth.js";
 import { validateOrReject } from "class-validator";
 import { Chat } from "../chatroom/chatroom.entity.js";
 
+const orm = await getORM();
 const em = orm.em;
 
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
@@ -88,12 +93,33 @@ async function findOne(req: Request, res: Response) {
     res.status(500).json({ message: err.message });
   }
 }
+
+async function getId(req: Request, res: Response) {
+  try {
+    const user = await em.findOne(User, {
+      email: req.body.sanitizeInput.email,
+    });
+    if (user != undefined) {
+      if (user.passwd != req.body.sanitizeInput.passwd) {
+        throw Error("Password not match");
+      } else {
+        const token = generateTokenFromObject(req.body);
+        return res.status(200).json({ data: (await token).toString() });
+      }
+    } else {
+      throw Error(`User with email ${req.body.sanitizeInput.email} dont exist`);
+    }
+  } catch (err: any) {
+    res.status(500).send({ error: err.message });
+  }
+}
+
 //Agregar validacion de correo unico
 async function addAndVerify(req: Request, res: Response) {
   try {
     const input = req.body.sanitizeInput;
     const buffer = new User();
-    await validateOrReject(buffer);
+    //await validateOrReject(buffer);
     buffer.nickname = input.nickname;
     buffer.firstname = input.firstname;
     buffer.lastname = input.lastname;
@@ -129,6 +155,13 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.data.id != req.params.id) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     const id: any = req.params.id;
     const { chatrooms, messages, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(User, id, {
@@ -151,33 +184,48 @@ async function update(req: Request, res: Response) {
 
 async function remove(req: Request, res: Response) {
   try {
+    if (process.env.ENCRYPT_REQUESTS == "true") {
+      if (req.body.user.data.id != req.params.id) {
+        throw Error(
+          "The user don't have privileges to do the current operation",
+        );
+      }
+    }
     const id: any = req.params.id;
-    const buffer = em.getReference(User, id);
+    const buffer = await em.findOneOrFail(User, id);
     await em.remove(buffer);
     await em.flush();
-    res.status(200).json({ message: `User ${buffer.id} deleted successfully` });
+    res
+      .status(200)
+      .json({ message: `User ${(await buffer).id} deleted successfully` });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
 }
 
 async function authenticateUser(req: Request, res: Response) {
-  const result = JSON.parse(await verifyEmail(req.params.token.toString()));
+  const result = JSON.parse(await verifyData(req.params.token.toString()));
 
   if (result.success) {
     try {
       em.create(User, result.decode.data);
       await em.flush();
-      res.status(201).send({
-        message: "User Created Successfully",
-        data: result.decode.data,
-      });
+      res.redirect(301, `http://localhost:4200/login/`);
     } catch (err: any) {
       res.status(500).send({ message: err.message });
     }
   } else {
-    res.status(500).send({ message: "Oops!, what happened", data: result.err });
+    res
+      .status(500)
+      .send({ message: "Authentication Failed", data: result.err });
   }
+}
+
+async function getToken(req: Request, res: Response) {
+  const token = generateTokenFromObject(req.body);
+  return res
+    .status(200)
+    .json({ input: req.body, output: (await token).toString() });
 }
 
 export {
@@ -190,4 +238,6 @@ export {
   authenticateUser,
   addAndVerify,
   sendLoginData,
+  getToken,
+  getId,
 };

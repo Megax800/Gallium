@@ -4,16 +4,25 @@ import Aedes from "aedes";
 import net from "net";
 import cors from "cors";
 import "dotenv/config";
+import { Server } from "socket.io";
 import { chatroomRouter } from "./chatroom/chatroom.routes.js";
 import { messageRouter } from "./message/message.routes.js";
 import { userRouter } from "./user/user.routes.js";
-import { orm } from "../shared/db/orm.js";
+import { getORM, initORM } from "../shared/db/orm.js";
 import { RequestContext } from "@mikro-orm/core";
+import { createServer } from "http";
 const app = express();
 const aedes: Aedes = new Aedes();
 const mqttbroker = net.createServer(aedes.handle);
+const server = createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*", methods: ["GET", "POST"] },
+});
 const port = process.env.HTTP_PORT;
 const mqttPort = process.env.MQTT_PORT; // Standard MQTT port
+
+await initORM();
+const orm = await getORM();
 
 app.use(cors());
 app.use((req, res, next) => {
@@ -24,7 +33,7 @@ app.use("/api/chatroom", chatroomRouter);
 app.use("/api/message", messageRouter);
 app.use("/api/user", userRouter);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`App listening on port ${port}`);
 });
 
@@ -47,6 +56,29 @@ aedes.on("publish", function (packet, client) {
     );
   }
 });
+
+io.use((socket: any, next) => {
+  const userId = socket.handshake.auth.userId;
+
+  socket.userId = userId;
+  next();
+});
+
+io.on("connection", (socket: any) => {
+  console.log("a user connected", socket.userId);
+
+  socket.on("join", (chatrooms: string[]) => {
+    socket.join(chatrooms);
+    console.log("user joined on chatrooms ", chatrooms);
+  });
+  socket.on("disconnect", () => console.log("user disconnected"));
+  socket.on("message", (body: string, receiver: string) => {
+    socket.to(receiver).emit("message", { body, sender: socket.userId });
+    console.log(`user ${socket.userId} send message ${body} for ${receiver}`);
+  });
+});
+
+export { app };
 
 /*aedes.on('subscribe', (packet, client) =>{
   if (client) {
