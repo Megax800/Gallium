@@ -12,8 +12,8 @@ import { getORM, initORM } from "../shared/db/orm.js";
 import { RequestContext } from "@mikro-orm/core";
 import { createServer } from "http";
 const app = express();
-const aedes: Aedes = new Aedes();
-const mqttbroker = net.createServer(aedes.handle);
+//const aedes: Aedes = new Aedes();
+//const mqttbroker = net.createServer(aedes.handle);
 const server = createServer(app);
 const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"] },
@@ -21,23 +21,33 @@ const io = new Server(server, {
 const port = process.env.HTTP_PORT;
 const mqttPort = process.env.MQTT_PORT; // Standard MQTT port
 
-await initORM();
-const orm = await getORM();
+const startServer = async () => {
+  if (process.env.NODE_ENV !== "test") {
+    await initORM();
+  }
+
+  const orm = await getORM();
+
+  app.use((req, res, next) => {
+    RequestContext.create(orm.em, next);
+  });
+
+  server.listen(port, () => {
+    console.log(`App listening on port ${port}`);
+  });
+};
 
 app.use(cors());
-app.use((req, res, next) => {
-  RequestContext.create(orm.em, next);
-});
 app.use(express.json());
 app.use("/api/chatroom", chatroomRouter);
 app.use("/api/message", messageRouter);
 app.use("/api/user", userRouter);
 
-server.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
 
-mqttbroker.listen(mqttPort, function () {
+/*mqttbroker.listen(mqttPort, function () {
   console.log("MQTT Broker listening on port", mqttPort);
 });
 
@@ -55,7 +65,7 @@ aedes.on("publish", function (packet, client) {
       packet.topic,
     );
   }
-});
+});*/
 
 io.use((socket: any, next) => {
   const userId = socket.handshake.auth.userId;

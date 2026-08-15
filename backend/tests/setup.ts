@@ -1,3 +1,4 @@
+import "reflect-metadata";
 process.env.NODE_ENV = "test";
 
 import { initTestDB, closeTestDB } from "./setup/test-db";

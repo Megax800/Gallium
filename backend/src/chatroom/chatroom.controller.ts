@@ -3,9 +3,6 @@ import { getORM } from "../../shared/db/orm.js";
 import { Chat } from "./chatroom.entity.js";
 import { User } from "../user/user.entity.js";
 
-const orm = await getORM();
-const em = orm.em;
-
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizeInput = {
     admin: req.body.admin,
@@ -28,6 +25,8 @@ function sanitizeInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const chatrooms = await em.find(
       Chat,
       {},
@@ -41,6 +40,8 @@ async function findAll(req: Request, res: Response) {
 
 async function findOne(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(
       Chat,
@@ -55,6 +56,8 @@ async function findOne(req: Request, res: Response) {
 
 async function getPreview(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(
       Chat,
@@ -79,6 +82,8 @@ async function getPreview(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const chat = new Chat();
 
     const users = await em.find(User, {
@@ -106,6 +111,8 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(Chat, { id });
@@ -133,6 +140,8 @@ async function update(req: Request, res: Response) {
 
 async function remove(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Chat, id);
     if (process.env.ENCRYPT_REQUESTS == "true") {

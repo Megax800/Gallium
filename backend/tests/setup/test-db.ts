@@ -1,9 +1,9 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 import { MikroORM } from "@mikro-orm/mongodb";
-import mikroOrmConfig from "../../shared/db/mikro-orm.config";
+import config from "../../shared/db/mikro-orm.config";
 
 let mongoServer: MongoMemoryServer;
-let orm: MikroORM;
+let orm: any;
 
 export const initTestDB = async () => {
   mongoServer = await MongoMemoryServer.create();
@@ -11,9 +11,10 @@ export const initTestDB = async () => {
   const uri = mongoServer.getUri();
 
   orm = await MikroORM.init({
-    ...mikroOrmConfig,
+    ...config,
     clientUrl: uri,
-  });
+    dbName: "test-db",
+  } as any);
 
   return orm;
 };

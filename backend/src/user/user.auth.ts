@@ -29,8 +29,7 @@ async function sendVerification(newUser: User) {
 
   transporter.sendMail(mailBody, (error, info) => {
     if (error) throw Error(error.toString());
-    console.log("Mail Sent");
-    console.log(info);
+    console.log(`Verification mail sent to ${info.envelope.to}`);
   });
 }
 
@@ -54,11 +53,9 @@ async function validateToken(req: Request, res: Response, next: NextFunction) {
         const token_value = jwt.verify(token, secret_key);
         req.body.user = token_value;
       } catch (err: any) {
-        return res
-          .status(403)
-          .send({
-            message: `Cannot proceed with operation. Reason: ${err.message}`,
-          });
+        return res.status(403).send({
+          message: `Cannot proceed with operation. Reason: ${err.message}`,
+        });
       }
     }
   }

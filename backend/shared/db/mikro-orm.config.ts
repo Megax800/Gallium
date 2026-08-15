@@ -1,12 +1,15 @@
-import { MongoHighlighter } from "@mikro-orm/mongo-highlighter";
 import { MongoDriver } from "@mikro-orm/mongodb";
 
-export default {
-  entities: ["dist/src/**/*.entity.js"],
-  entitiesTs: ["src/**/*.entity.ts"],
+const config = {
   driver: MongoDriver,
+
   dbName: process.env.DB_NAME,
   clientUrl: process.env.DB_URL_STRING,
-  highlighter: new MongoHighlighter(),
+
+  entities: ["dist/src/**/*.entity.js"],
+  entitiesTs: ["src/**/*.entity.ts"],
+
   debug: true,
 };
+
+export default config;

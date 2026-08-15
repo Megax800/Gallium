@@ -3,9 +3,6 @@ import { Message } from "./message.entity.js";
 import { getORM } from "../../shared/db/orm.js";
 import { Chat } from "../chatroom/chatroom.entity.js";
 
-const orm = await getORM();
-const em = orm.em;
-
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizeInput = {
     body: req.body.body,
@@ -24,6 +21,8 @@ function sanitizeInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const messages = await em.find(Message, {});
     res.status(200).json(messages);
   } catch (err: any) {
@@ -33,6 +32,8 @@ async function findAll(req: Request, res: Response) {
 
 async function findOne(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Message, { id });
     res.status(200).json(buffer);
@@ -43,6 +44,8 @@ async function findOne(req: Request, res: Response) {
 
 async function messagesLastN(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id = req.params.id;
     const results = Number(req.params.num);
     const messages = await em.find(
@@ -60,6 +63,8 @@ async function messagesLastN(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const today = new Date();
     const buffer = em.create(Message, req.body);
     buffer.date = today.toLocaleDateString();
@@ -73,6 +78,8 @@ async function add(req: Request, res: Response) {
 
 async function update(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Message, id);
     if (process.env.ENCRYPT_REQUESTS == "true") {
@@ -92,6 +99,8 @@ async function update(req: Request, res: Response) {
 
 async function remove(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Message, { id });
     if (process.env.ENCRYPT_REQUESTS == "true") {

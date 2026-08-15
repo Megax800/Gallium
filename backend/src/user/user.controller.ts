@@ -9,9 +9,6 @@ import {
 import { validateOrReject } from "class-validator";
 import { Chat } from "../chatroom/chatroom.entity.js";
 
-const orm = await getORM();
-const em = orm.em;
-
 function sanitizeInput(req: Request, res: Response, next: NextFunction) {
   req.body.sanitizeInput = {
     nickname: req.body.nickname,
@@ -32,6 +29,8 @@ function sanitizeInput(req: Request, res: Response, next: NextFunction) {
 
 async function findAll(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const users = await em.find(
       User,
       {},
@@ -45,6 +44,8 @@ async function findAll(req: Request, res: Response) {
 
 async function sendLoginData(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const user = await em.findOneOrFail(
       User,
@@ -60,13 +61,13 @@ async function sendLoginData(req: Request, res: Response) {
       firstname: user.firstname,
       lastname: user.lastname,
       email: user.email,
-      chatrooms: user.chatrooms.getItems().map((chat) => {
+      chatrooms: user.chatrooms.getItems().map((chat: any) => {
         const chatUsers = chat.users.getItems();
 
         let chatname = chat.chatname;
 
         if (!chat.isGroup) {
-          const otherUser = chatUsers.find((u) => u.id !== user.id);
+          const otherUser = chatUsers.find((u: any) => u.id !== user.id);
           chatname = otherUser?.nickname;
         }
 
@@ -82,6 +83,8 @@ async function sendLoginData(req: Request, res: Response) {
 
 async function findOne(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(
       User,
@@ -96,6 +99,8 @@ async function findOne(req: Request, res: Response) {
 
 async function getId(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const user = await em.findOne(User, {
       email: req.body.sanitizeInput.email,
     });
@@ -117,6 +122,8 @@ async function getId(req: Request, res: Response) {
 //Agregar validacion de correo unico
 async function addAndVerify(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const input = req.body.sanitizeInput;
     const buffer = new User();
     //await validateOrReject(buffer);
@@ -138,6 +145,8 @@ async function addAndVerify(req: Request, res: Response) {
 
 async function add(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const checkEmail = await em.find(User, {
       email: req.body.sanitizeInput.email,
     });
@@ -149,12 +158,22 @@ async function add(req: Request, res: Response) {
     await em.flush();
     res.status(201).json({ data: buffer });
   } catch (err: any) {
-    res.status(500).json({ OrmError: err.message, ValidationError: err });
+    console.log(err);
+    if (err.message == "Email already registered") {
+      err.statusCode = 400;
+    } else {
+      err.statusCode = 500;
+    }
+    res
+      .status(err.statusCode)
+      .json({ OrmError: err.message, ValidationError: err });
   }
 }
 
 async function update(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     if (process.env.ENCRYPT_REQUESTS == "true") {
       if (req.body.user.data.id != req.params.id) {
         throw Error(
@@ -184,6 +203,8 @@ async function update(req: Request, res: Response) {
 
 async function remove(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em;
     if (process.env.ENCRYPT_REQUESTS == "true") {
       if (req.body.user.data.id != req.params.id) {
         throw Error(
@@ -208,6 +229,8 @@ async function authenticateUser(req: Request, res: Response) {
 
   if (result.success) {
     try {
+      const orm = await getORM();
+      const em = orm.em;
       em.create(User, result.decode.data);
       await em.flush();
       res.redirect(301, `http://localhost:4200/login/`);

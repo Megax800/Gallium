@@ -22,7 +22,7 @@ export class Chat extends BaseEntity {
   })
   users = new Collection<User>(this);
   @ManyToOne(() => User, { nullable: true, cascade: [Cascade.ALL] })
-  admin!: User;
+  admin!: Rel<User>;
   @Property({ type: "string", nullable: true })
   @IsEmpty()
   chatname?: string;
