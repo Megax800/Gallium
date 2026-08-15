@@ -1,8 +1,13 @@
 <header>
   <nav>
     <ul>
-      <li routerLink="/login">Login</li>
-      <li routerLink="/signup">Registrarse</li>
+      @if (!userLoginService.isLogged()) {
+        <li routerLink="/login">Iniciar sesión</li>
+        <li routerLink="/signup">Registrarse</li>
+      } @else {
+        <li routerLink="/chatroom">Ir a chats</li>
+        <li (click)="userLoginService.logout()">Cerrar sesión</li>
+      }
     </ul>
   </nav>
 </header>

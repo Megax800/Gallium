@@ -83,7 +83,7 @@ async function update(req: Request, res: Response) {
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Message, id);
     if (process.env.ENCRYPT_REQUESTS == "true") {
-      if (req.body.user.data.id != (await buffer).sender.id) {
+      if (req.body.user.id != (await buffer).sender.id) {
         throw Error(
           "The user don't have privileges to do the current operation",
         );
@@ -104,7 +104,7 @@ async function remove(req: Request, res: Response) {
     const id: any = req.params.id;
     const buffer = await em.findOneOrFail(Message, { id });
     if (process.env.ENCRYPT_REQUESTS == "true") {
-      if (req.body.user.data.id != (await buffer).sender.id) {
+      if (req.body.user.id != (await buffer).sender.id) {
         throw Error(
           "The user don't have privileges to do the current operation",
         );

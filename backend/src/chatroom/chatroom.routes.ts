@@ -7,6 +7,9 @@ import {
   remove,
   sanitizeInput,
   getPreview,
+  updateChatname,
+  addUsers,
+  removeUsers,
 } from "./chatroom.controller.js";
 import { validateToken } from "../user/user.auth.js";
 
@@ -18,3 +21,16 @@ chatroomRouter.get("/preview/:id", getPreview);
 chatroomRouter.post("/", sanitizeInput, add);
 chatroomRouter.patch("/:id", sanitizeInput, validateToken, update);
 chatroomRouter.delete("/:id", validateToken, remove);
+chatroomRouter.patch(
+  "/chatname/:id",
+  sanitizeInput,
+  validateToken,
+  updateChatname,
+);
+chatroomRouter.patch("/addUsers/:id", sanitizeInput, validateToken, addUsers);
+chatroomRouter.patch(
+  "/removeUser/:id",
+  sanitizeInput,
+  validateToken,
+  removeUsers,
+);

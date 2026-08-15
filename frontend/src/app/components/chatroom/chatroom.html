@@ -14,7 +14,7 @@
           class="create"
           placeholder="Ingrese mail y presione enter"
           [formControl]="mailControl"
-          (keydown.enter)="mailControl.valid ? addUserMail() : clear(mailControl)"
+          (keyup.enter)="mailControl.valid ? addUserMail() : clear(mailControl)"
         /><br />
         <ul>
           @for (mail of usersMail(); track $index) {
@@ -57,44 +57,113 @@
         </ul>
       </div>
     </div>
-    <div class="chatroom">
-      @if (currentChat()) {
-        <div class="name">
-          <h3>{{ chatName() }}</h3>
-        </div>
-        <div class="messages">
-          <ul #myMessages>
-            @for (message of messages().slice().reverse(); track message.id) {
-              @if (this.lastDay !== message.date) {
-                <li class="date">{{ differentDay(message.date) }}</li>
+    <mat-drawer-container>
+      <div class="chatroom">
+        @if (currentChat()) {
+          <div class="name" (click)="info.toggle()">
+            <h3>{{ chatName() }}</h3>
+          </div>
+          <div class="messages">
+            <ul #myMessages>
+              @for (message of processedMessages(); track message.id) {
+                @if (message.showDay) {
+                  <li class="date">{{ message.date }}</li>
+                }
+                @if (message.showUser) {
+                  <li class="user">{{ message.nickname }}</li>
+                }
+                <li>
+                  {{ message.body + ' ' + message.time }}
+                  @if (message.sender === this.user()?.id) {
+                    <button (click)="deleteMessage(message.id)">x</button>
+                  }
+                </li>
               }
-              @if (this.lastUserId !== message.sender || this.lastDay !== message.date) {
-                <li class="user">{{ differentUser(message.sender) }}</li>
-              }
+            </ul>
+          </div>
+          <div class="send">
+            <input
+              #sendInput
+              [formControl]="messageControl"
+              type="text"
+              class="sendInput"
+              name="sendInput"
+              placeholder="Escribe un mensaje..."
+              (keyup.enter)="messageControl.valid ? sendMessage() : clear(messageControl)"
+            />
+            <button
+              class="sendButton"
+              (click)="messageControl.valid ? sendMessage() : clear(messageControl)"
+            >
+              ➤
+            </button>
+          </div>
+        }
+      </div>
+      <mat-drawer #info id="info" mode="side" position="end" (closed)="setBooleansFalse()">
+        @if (!editingName()) {
+          <h3 class="infoTittle">
+            {{ chatName() }}
+            @if (user()?.id === currentChat()?.admin) {
+              <button matIconButton (click)="editName()">
+                <mat-icon fontIcon="edit"></mat-icon>
+              </button>
+            }
+          </h3>
+        } @else {
+          <h3 class="infoTittle">
+            <input
+              #nameInput
+              type="text"
+              [formControl]="changeNameControl"
+              (keyup.enter)="acceptName()"
+            />
+            <button matIconButton (click)="acceptName()">
+              <mat-icon fontIcon="check"></mat-icon>
+            </button>
+          </h3>
+        }
+        <div>
+          <h3 class="infoTittle">Usuarios</h3>
+          <ul id="userList">
+            @for (user of currentChat()?.users; track user.id) {
               <li>
-                {{ message.body + ' ' + message.time }}
+                {{ user.nickname }}
+                @if (this.user()?.id === currentChat()?.admin && user.id !== this.user()?.id) {
+                  <button (click)="removeUserChat(currentChat()!.id, user.id)">x</button>
+                }
               </li>
             }
+            @if (user()?.id === currentChat()?.admin && !addingUser()) {
+              <b><li (click)="addingUser.set(true)">Agregar usuario al grupo</li></b>
+            }
           </ul>
+          @if (addingUser()) {
+            <h3>Mail del usuario</h3>
+            <input
+              #addUser
+              type="text"
+              [formControl]="addUserGroup"
+              (keyup.enter)="addUserGroup.valid ? addUserToGroup() : clear(addUserGroup)"
+            />
+            <button
+              [disabled]="addUsersMail().length === 0"
+              (click)="addUsersChat(currentChat()!.id)"
+            >
+              Agregar al grupo
+            </button>
+            <br />
+            <ul>
+              @for (mail of addUsersMail(); track $index) {
+                <li>{{ mail }} <button (click)="removeAddedUserMail(mail)">x</button></li>
+              }
+            </ul>
+          }
         </div>
-        <div class="send">
-          <input
-            #sendInput
-            [formControl]="messageControl"
-            type="text"
-            class="sendInput"
-            name="sendInput"
-            placeholder="Escribe un mensaje..."
-            (keydown.enter)="messageControl.valid ? sendMessage() : clear(messageControl)"
-          />
-          <button
-            class="sendButton"
-            (click)="messageControl.valid ? sendMessage() : clear(messageControl)"
-          >
-            ➤
-          </button>
-        </div>
-      }
-    </div>
+        @if (this.user()?.id === currentChat()?.admin) {
+          <h3 (click)="deleteChatroom(currentChat()!.id)">Eliminar chat</h3>
+        }
+      </mat-drawer>
+    </mat-drawer-container>
   </div>
 </main>

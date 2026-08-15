@@ -2,14 +2,48 @@
   <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
     <label for="nickname">Nombre de usuario</label>
     <input type="text" formControlName="nickname" id="nickname" /><br />
+    @if (nickname.invalid && nickname.touched) {
+      <small>El nombre de usuario es obligatorio</small>
+    }
     <label for="name">Nombre</label>
     <input type="text" formControlName="name" id="name" /><br />
+    @if (name.invalid && name.touched) {
+      <small>El nombre es obligatorio</small>
+    }
     <label for="surname">Apellido</label>
     <input type="text" formControlName="surname" id="surname" /><br />
+    @if (surname.invalid && surname.touched) {
+      <small>El apellido es obligatorio</small>
+    }
     <label for="email">Email</label>
     <input type="text" formControlName="email" id="email" /><br />
+    @if (email.invalid && email.touched) {
+      @if (email.hasError('required')) {
+        <small>El email es obligatorio</small>
+      }
+      @if (email.hasError('email')) {
+        <small>El formato del email es incorrecto</small>
+      }
+    }
     <label for="password">Contraseña</label>
     <input type="password" formControlName="password" id="password" /><br />
+    @if (password.invalid && password.touched) {
+      @if (password.hasError('required')) {
+        <small>La contraseña es obligatoria</small>
+      }
+      @if (password.hasError('minlength')) {
+        <small>La contraseña debe tener al menos 8 caracteres</small>
+      }
+      @if (password.hasError('pattern')) {
+        <small
+          >La contraseña debe tener al menos una mayuscula, una minuscula, un numero y un caracter
+          especial</small
+        >
+      }
+    }
+    @if (this.emailSent()) {
+      <div>Se le envió un correo para activar su cuenta</div>
+    }
     <button type="submit" [disabled]="signupForm.invalid">Enviar</button>
   </form>
 </div>
