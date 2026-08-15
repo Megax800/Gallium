@@ -54,6 +54,7 @@ export class Chatroom implements OnInit {
   chatnameControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
   descriptionControl = new FormControl('', Validators.pattern(/.*\S.*/));
   messageControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
+  isOpen = false;
   constructor(private socket: ChatService) {
     effect(() => {
       this.inputFocus();
@@ -180,5 +181,8 @@ export class Chatroom implements OnInit {
   ngOnInit(): void {
     this.getuser();
     this.socket.onMessage((msg: string) => {});
+  }
+  toggleMenu() {
+    this.isOpen = !this.isOpen;
   }
 }

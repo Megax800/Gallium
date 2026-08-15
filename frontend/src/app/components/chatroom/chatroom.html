@@ -1,7 +1,10 @@
 <main>
   <div class="container">
-    <div class="chats">
-      <div class="gallium"><h2>Gallium</h2></div>
+    <div class="chats" class="sidebar" [class.open]="isOpen">
+      <div class="gallium">
+        <h2>Gallium</h2>
+        <button (click)="toggleMenu()" class="slideButton">☰</button>
+      </div>
       <div id="create">
         <label><b>Crear chat</b></label
         ><br />
@@ -47,7 +50,7 @@
         />
         <ul>
           @for (chat of filteredChatrooms(); track chat.id) {
-            <li (click)="getChatrooms(chat.id, chat.chatname)">
+            <li (click)="getChatrooms(chat.id, chat.chatname); toggleMenu()">
               {{ chat.chatname }}
             </li>
           }
