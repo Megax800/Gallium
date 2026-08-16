@@ -84,6 +84,7 @@ export class Chatroom implements OnInit {
   messageControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
   changeNameControl = new FormControl('', [Validators.required, Validators.pattern(/.*\S.*/)]);
   addUserGroup = new FormControl('', [Validators.required, Validators.email]);
+  isOpen = false;
   constructor() {
     effect(() => {
       this.inputFocus();
@@ -354,5 +355,8 @@ export class Chatroom implements OnInit {
         }));
       }
     });
+  }
+  toggleMenu() {
+    this.isOpen = !this.isOpen;
   }
 }

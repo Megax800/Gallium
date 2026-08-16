@@ -1,6 +1,6 @@
 <main>
   <div class="container">
-    <div class="chats" class="sidebar" [class.open]="isOpen">
+    <div class="sidebar" [class.open]="isOpen">
       <div class="gallium">
         <h2>Gallium</h2>
         <button (click)="toggleMenu()" class="slideButton">☰</button>
@@ -57,7 +57,7 @@
         </ul>
       </div>
     </div>
-    <mat-drawer-container>
+    <mat-drawer-container class="mat-container">
       <div class="chatroom">
         @if (currentChat()) {
           <div class="name" (click)="info.toggle()">

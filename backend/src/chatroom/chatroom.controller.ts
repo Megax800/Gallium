@@ -140,6 +140,8 @@ async function update(req: Request, res: Response) {
 
 async function updateChatname(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(Chat, { id });
@@ -167,6 +169,8 @@ async function updateChatname(req: Request, res: Response) {
 
 async function addUsers(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(
@@ -190,10 +194,12 @@ async function addUsers(req: Request, res: Response) {
       buffer.admin = await em.getReference(User, admin);
     }
     await em.flush();
-    const result = buffer.users.getItems().map((user) => ({
-      id: user.id,
-      nickname: user.nickname,
-    }));
+    const result = buffer.users
+      .getItems()
+      .map((user: { id: any; nickname: any }) => ({
+        id: user.id,
+        nickname: user.nickname,
+      }));
     res.status(200).json(result);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -202,6 +208,8 @@ async function addUsers(req: Request, res: Response) {
 
 async function removeUsers(req: Request, res: Response) {
   try {
+    const orm = await getORM();
+    const em = orm.em.fork();
     const id: any = req.params.id;
     const { users, admin, ...data } = req.body.sanitizeInput ?? {};
     const buffer = await em.findOneOrFail(
@@ -220,7 +228,7 @@ async function removeUsers(req: Request, res: Response) {
     if (users) {
       const userToRemove = buffer.users
         .getItems()
-        .find((user) => users.includes(user.id));
+        .find((user: { id: any }) => users.includes(user.id));
       if (userToRemove) {
         buffer.users.remove(userToRemove);
       }
@@ -230,10 +238,12 @@ async function removeUsers(req: Request, res: Response) {
       buffer.admin = await em.getReference(User, admin);
     }
     await em.flush();
-    const result = buffer.users.getItems().map((user) => ({
-      id: user.id,
-      nickname: user.nickname,
-    }));
+    const result = buffer.users
+      .getItems()
+      .map((user: { id: any; nickname: any }) => ({
+        id: user.id,
+        nickname: user.nickname,
+      }));
     res.status(200).json(result);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
