@@ -4,6 +4,7 @@ import { MessagesLastN } from '../dto/messagesLastN';
 import { Observable, Subject } from 'rxjs';
 import { UserIdNickname } from '../dto/userIdNickname';
 import { UsersIdNicknameRoom } from '../dto/usersIdNicknameRoom';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class WebSocketService {
   deletedUserSubject = new Subject<UsersIdNicknameRoom>();
   room = signal('');
   constructor() {
-    this.socket = io('http://localhost:3000', {
+    this.socket = io(`${environment.apiUrl}`, {
       auth: {
         token: localStorage.getItem('token'),
       },

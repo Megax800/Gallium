@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { ChatroomPreview } from '../dto/chatroomPreview';
 import { ChatIdChatname } from '../dto/chatIdChatname';
 import { UserIdNickname } from '../dto/userIdNickname';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +11,11 @@ import { UserIdNickname } from '../dto/userIdNickname';
 export class Chatrooms {
   http = inject(HttpClient);
   getPreview(id: string) {
-    return this.http.get<ChatroomPreview>(`http://localhost:3000/api/chatroom/preview/${id}`);
+    return this.http.get<ChatroomPreview>(`${environment.apiUrl}/api/chatroom/preview/${id}`);
   }
   postChat(isGroup: boolean, id: string, mails: string[], chatname: string, description: string) {
     return this.http.post<ChatIdChatname>(
-      'http://localhost:3000/api/chatroom/',
+      `${environment.apiUrl}/api/chatroom/`,
       isGroup
         ? {
             isGroup: isGroup,
@@ -30,24 +31,24 @@ export class Chatrooms {
     );
   }
   patchChatname(id: string, chatname: string) {
-    return this.http.patch<string>(`http://localhost:3000/api/chatroom/chatname/${id}`, {
+    return this.http.patch<string>(`${environment.apiUrl}/api/chatroom/chatname/${id}`, {
       chatname: chatname,
     });
   }
   addUsers(id: string, users: string[]) {
-    return this.http.patch<UserIdNickname[]>(`http://localhost:3000/api/chatroom/addUsers/${id}`, {
+    return this.http.patch<UserIdNickname[]>(`${environment.apiUrl}/api/chatroom/addUsers/${id}`, {
       users: users,
     });
   }
   removeUsers(id: string, users: string[]) {
     return this.http.patch<UserIdNickname[]>(
-      `http://localhost:3000/api/chatroom/removeUser/${id}`,
+      `${environment.apiUrl}/api/chatroom/removeUser/${id}`,
       {
         users: users,
       },
     );
   }
   deleteChat(id: string) {
-    return this.http.delete(`http://localhost:3000/api/chatroom/${id}`);
+    return this.http.delete(`${environment.apiUrl}/api/chatroom/${id}`);
   }
 }

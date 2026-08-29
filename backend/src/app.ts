@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import express from "express";
-import Aedes from "aedes";
+//import Aedes from "aedes";
 import net from "net";
 import cors from "cors";
 import "dotenv/config";
@@ -16,7 +16,7 @@ const app = express();
 //const mqttbroker = net.createServer(aedes.handle);
 const server = createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+  cors: { origin: process.env.CORS_URL, methods: ["GET", "POST"] },
 });
 const port = process.env.HTTP_PORT;
 const mqttPort = process.env.MQTT_PORT; // Standard MQTT port
