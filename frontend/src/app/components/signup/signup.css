@@ -2,7 +2,7 @@ div {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  background-image: url('/paginaFondo.png');
+  /*background-image: url('paginaFondo.png');*/
   background-size: 75%;
   background-position: center;
   padding: 20px;

@@ -1,4 +1,4 @@
-<div>
+<div [style.background-image]="'url(paginaFondo.png)'">
   <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
     <label for="nickname">Nombre de usuario</label>
     <input type="text" formControlName="nickname" id="nickname" /><br />

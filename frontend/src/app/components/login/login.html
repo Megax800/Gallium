@@ -1,4 +1,4 @@
-<div>
+<div [style.background-image]="'url(paginaFondo.png)'">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <label for="email">Email</label>
     <input type="text" formControlName="email" id="email" /><br />

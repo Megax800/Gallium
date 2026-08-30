@@ -24,7 +24,7 @@ async function sendVerification(newUser: User) {
     from: process.env.MAIL_USER,
     to: newUser.email,
     subject: "Te damos la bienvenida a Gallium",
-    text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: http://localhost:3000/api/user/verify/${token}`,
+    text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: ${process.env.LOCALHOST}/api/user/verify/${token}`,
   };
 
   transporter.sendMail(mailBody, (error, info) => {
