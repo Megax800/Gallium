@@ -21,7 +21,7 @@ export class User {
     });
   }
   signup(nickname: string, firstname: string, lastname: string, email: string, passwd: string) {
-    return this.http.post<string>('${environment.apiUrl}/api/user/verify', {
+    return this.http.post<string>(`${environment.apiUrl}/api/user/verify`, {
       nickname: nickname,
       firstname: firstname,
       lastname: lastname,
