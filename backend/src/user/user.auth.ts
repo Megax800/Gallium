@@ -27,8 +27,10 @@ async function sendVerification(newUser: User) {
     text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: ${process.env.LOCALHOST}/api/user/verify/${token}`,
   };
 
-  const info = await transporter.sendMail(mailBody);
-  console.log(`Verification mail sent to ${info.envelope.to}`);
+  transporter.sendMail(mailBody, (error, info) => {
+    if (error) throw Error(error.toString());
+    console.log(`Verification mail sent to ${info.envelope.to}`);
+  });
 }
 
 async function verifyData(token: string) {
