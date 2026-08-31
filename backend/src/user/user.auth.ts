@@ -1,4 +1,4 @@
-import mailer from "nodemailer";
+import { Resend } from "resend";
 import jwt from "jsonwebtoken";
 import { User } from "./user.entity";
 import { NextFunction, Request, Response } from "express";
@@ -6,31 +6,26 @@ import { NextFunction, Request, Response } from "express";
 - Plantear un token seguro y una mejor contraseña para el correo
 */
 const secret_key = `${process.env.JWT_KEY}`;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendVerification(newUser: User) {
-  const transporter = mailer.createTransport({
-    host: process.env.MAIL_HOST,
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
-
   const token = jwt.sign({ data: newUser }, secret_key, { expiresIn: "10m" });
 
   const mailBody = {
-    from: process.env.MAIL_USER,
+    from: "Gallium <onboarding@resend.dev>",
     to: newUser.email,
     subject: "Te damos la bienvenida a Gallium",
-    text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: ${process.env.LOCALHOST}/api/user/verify/${token}`,
+    text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: ${process.env.BACKEND_URL}/api/user/verify/${token}`,
   };
 
-  transporter.sendMail(mailBody, (error, info) => {
-    if (error) throw Error(error.toString());
-    console.log(`Verification mail sent to ${info.envelope.to}`);
-  });
+  const { data, error } = await resend.emails.send(mailBody);
+
+  if (error) {
+    console.error("Error sending verification email:", error);
+    throw new Error(error.message);
+  }
+
+  console.log(`Verification mail sent. ID: ${data?.id}`);
 }
 
 async function verifyData(token: string) {

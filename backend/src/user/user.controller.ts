@@ -207,7 +207,7 @@ async function update(req: Request, res: Response) {
 async function remove(req: Request, res: Response) {
   try {
     const orm = await getORM();
-    const em = orm.em;
+    const em = orm.em.fork();
     if (process.env.ENCRYPT_REQUESTS == "true") {
       if (req.body.user.data.id != req.params.id) {
         throw Error(
@@ -233,10 +233,10 @@ async function authenticateUser(req: Request, res: Response) {
   if (result.success) {
     try {
       const orm = await getORM();
-      const em = orm.em;
+      const em = orm.em.fork();
       em.create(User, result.decode.data);
       await em.flush();
-      res.redirect(301, `http://localhost:4200/login/`);
+      res.redirect(301, `${process.env.FRONTEND_URL}/login/`);
     } catch (err: any) {
       res.status(500).send({ message: err.message });
     }

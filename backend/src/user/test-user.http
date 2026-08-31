@@ -15,7 +15,7 @@ Content-Type: application/json
     "nickname": "CoolAir",
     "firstname": "Pedro",
     "lastname": "Lolas",
-    "email": "",
+    "email": "rusmanoctavio@gmail.com",
     "passwd": ""
 }
 
@@ -61,5 +61,5 @@ Content-Type: application/json
 }
 
 ### Borrar Usuario
-DELETE http://localhost:3000/api/user/69f2886e220b2766c8de5582
+DELETE http://localhost:3000/api/user/6a95faa02177d3803bc42e11
 Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjlmMjg4NmUyMjBiMjc2NmM4ZGU1NTgyIn0sImlhdCI6MTc3NzgxNDc3MCwiZXhwIjoxNzc4MDczOTcwfQ.WVR3x-loBFeJN6ZGQT1_fVObrf3Ot5SjnRn0HSgYrCY
