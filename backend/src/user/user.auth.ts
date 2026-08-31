@@ -10,8 +10,8 @@ const secret_key = `${process.env.JWT_KEY}`;
 async function sendVerification(newUser: User) {
   const transporter = mailer.createTransport({
     host: process.env.MAIL_HOST,
-    port: 465,
-    secure: true,
+    port: 587,
+    secure: false,
     auth: {
       user: process.env.MAIL_USER,
       pass: process.env.MAIL_PASS,
@@ -27,10 +27,8 @@ async function sendVerification(newUser: User) {
     text: `Hola!, para poder terminar el proceso de registro de tu nueva cuenta de Gallium accede la siguiente enlace: ${process.env.LOCALHOST}/api/user/verify/${token}`,
   };
 
-  transporter.sendMail(mailBody, (error, info) => {
-    if (error) throw Error(error.toString());
-    console.log(`Verification mail sent to ${info.envelope.to}`);
-  });
+  const info = await transporter.sendMail(mailBody);
+  console.log(`Verification mail sent to ${info.envelope.to}`);
 }
 
 async function verifyData(token: string) {
